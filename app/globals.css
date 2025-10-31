@@ -2,15 +2,21 @@
 
 @plugin "tailwindcss-animate";
 
-/* Estilos para mapa em tela cheia */
-html, body {
+/* Estilos para mapa em tela cheia - aplicar apenas quando necessário */
+.map-fullscreen {
+  overflow: hidden;
+  height: 100vh;
+}
+
+.map-fullscreen html,
+.map-fullscreen body {
   margin: 0;
   padding: 0;
   height: 100%;
   overflow: hidden;
 }
 
-#__next {
+.map-fullscreen #__next {
   height: 100%;
 }
 

@@ -5,8 +5,12 @@ import { LoginForm } from './_components/login-form';
 import Imagem from './_components/imagem';
 import { ModeToggle } from '@/components/toggle-theme';
 import Background from './_components/background';
+import { auth } from '@/auth';
+import { redirect } from 'next/navigation';
 
-export default function Login() {
+export default async function Login() {
+	const session = await auth();
+	if (session) redirect('/');
 	return (
 		<>
 			<Background />

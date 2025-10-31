@@ -14,8 +14,8 @@ const myFont = localFont({
 });
 
 export const metadata: Metadata = {
-	title: 'Escolas Paraisópolis',
-	description: 'Mapa Interativo das Escolas de Paraisópolis',
+	title: 'OUCBT - Operação Urbana Consorciada Bairros do Tamanduateí',
+	description: 'Operação Urbana Consorciada Bairros do Tamanduateí',
 };
 
 export default function RootLayout({
@@ -65,7 +65,7 @@ export default function RootLayout({
 					<QueryProvider>
 						<ThemeProvider
 							attribute='class'
-							defaultTheme='system'
+							defaultTheme='light'
 							enableSystem
 							disableTransitionOnChange>
 							{children}

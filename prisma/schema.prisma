@@ -26,94 +26,66 @@ model Usuario {
     @@map("usuarios")
 }
 
-model Escola {
-    id          String  @id @default(uuid())
-    nome        String
-    endereco    String
-    latitude    Decimal @db.Decimal(11, 8)
-    longitude   Decimal @db.Decimal(11, 8)
-
-    cadastros   Cadastro[]
-
-    @@map("escolas")
+enum Status {
+    EM_ANALISE
+    DEFERIDO
+    INDEFERIDO
 }
 
-model Aluno {
-    id          String      @id @default(uuid())
-    dataNasc    DateTime    @db.Date
-    cadastroId  String
-
-    cadastro    Cadastro    @relation(fields: [cadastroId], references: [id])
-
-    @@map("alunos")
+enum TipoInscricao {
+    MORADOR
+    TRABALHADOR
 }
 
-model PontoInteresse {
-    id          String  @id @default(uuid())
-    latitude    Decimal @db.Decimal(11, 8)
-    longitude   Decimal @db.Decimal(11, 8)
-    endereco    String
+model Votante {
+    id                     String                 @id @default(uuid())
+    tipoInscricao          TipoInscricao          @default(MORADOR)
+    empresa                String?
+    nome                   String
+    email                  String                 @unique
+    cpf                    String                 @unique
+    dataNascimento         DateTime               @db.Date
+    status                 Status                 @default(EM_ANALISE)
+    criadoEm               DateTime               @default(now())
+    atualizadoEm           DateTime               @default(now()) @updatedAt
 
-    cadastros   Cadastro[]
+    endereco               Endereco?
+    arquivos               Arquivo[]
 
-    @@map("pontos_interesse")
+    @@map("votantes")
 }
 
-model PontoSugerido {
-    id          String      @id @default(uuid())
-    latitude    Decimal     @db.Decimal(11, 8)
-    longitude   Decimal     @db.Decimal(11, 8)
-    cadastroId  String
+model Endereco {
+    id                     String                 @id @default(uuid())
+    logradouro             String
+    numero                 String?
+    complemento            String?
+    bairro                 String
+    cidade                 String
+    estado                 String
+    cep                    String
+    latitude               Float?
+    longitude              Float?
+    votanteId              String                 @unique
+    criadoEm               DateTime               @default(now())
+    atualizadoEm           DateTime               @default(now()) @updatedAt
 
-    cadastro    Cadastro    @relation(fields: [cadastroId], references: [id])
+    votante                Votante                @relation(fields: [votanteId], references: [id])
 
-    @@map("pontos_sugeridos")
+    @@map("enderecos")
 }
 
-enum ApontamentoTipo {
-    PROBLEMA
-    SUGESTAO
-}
+model Arquivo {
+    id                     String                 @id @default(uuid())
+    nome                   String
+    tipo                   String
+    tamanho                Int
+    caminho                String
+    votanteId              String
+    criadoEm               DateTime               @default(now())
+    atualizadoEm           DateTime               @default(now()) @updatedAt
 
-model Apontamento {
-    id          String          @id @default(uuid())
-    descricao   String          @db.Text
-    cadastroId  String
-    tipo        ApontamentoTipo
+    votante                Votante                @relation(fields: [votanteId], references: [id])
 
-    cadastro    Cadastro        @relation(fields: [cadastroId], references: [id])
-
-    @@map("apontamentos")
-}
-
-model LocalReuniao {
-    id          String          @id @default(uuid())
-    latitude    Decimal         @db.Decimal(11, 8)
-    longitude   Decimal         @db.Decimal(11, 8)
-    cadastroId  String
-
-    cadastro    Cadastro        @relation(fields: [cadastroId], references: [id])
-
-    @@map("locais_reuniao")
-}
-
-model Cadastro {
-    id                  String              @id @default(uuid())
-    escolaId            String
-    transporteIda       String
-    acompanhanteIda     String
-    transporteVolta     String
-    acompanhanteVolta   String
-    casaLatitude        Decimal             @db.Decimal(11, 8)
-    casaLongitude       Decimal             @db.Decimal(11, 8)
-    sensacao            String?             @db.Text
-
-    escola              Escola              @relation(fields: [escolaId], references: [id])
-    alunos              Aluno[]
-    pontosInteresse     PontoInteresse[]
-    pontosSugeridos     PontoSugerido[]
-    apontamentos        Apontamento[]
-    locaisReuniao       LocalReuniao[]
-
-    @@map("cadastros")
+    @@map("arquivos")
 }

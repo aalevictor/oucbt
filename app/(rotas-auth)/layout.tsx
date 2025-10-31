@@ -1,7 +1,6 @@
 /** @format */
 
 import Breadcrumbs from '@/components/breadcrumbs';
-import { DrawerMenu } from '@/components/drawer-menu';
 import { AppSidebar } from '@/components/sidebar/app-sidebar';
 import { ModeToggle } from '@/components/toggle-theme';
 import { Separator } from '@/components/ui/separator';
@@ -26,7 +25,7 @@ export default async function RotasAuth({
 			<SidebarProvider>
 				<AppSidebar />
 				<SidebarInset>
-					<header className='h-16 bg-muted/50 dark:bg-background shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 hidden sm:flex'>
+					<header className='h-16 bg-muted/50 dark:bg-background shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 flex'>
 						<div className='flex items-center gap-2 px-4'>
 							<SidebarTrigger className='-ml-1 md:hidden' />
 							<Separator
@@ -40,7 +39,6 @@ export default async function RotasAuth({
 						{children}
 					</div>
 				</SidebarInset>
-				<DrawerMenu />
 			</SidebarProvider>
 		</div>
 	);
