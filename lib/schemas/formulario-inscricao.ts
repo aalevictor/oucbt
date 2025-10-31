@@ -174,7 +174,7 @@ export type FormularioInscricaoData = z.infer<typeof formularioInscricaoSchema>;
 // Schemas individuais para cada etapa (para validação parcial)
 export const etapaSchemas = {
   1: tipoInscricaoSchema,
-  2: votanteSchema,
-  3: enderecoSchema,
+  2: enderecoSchema,
+  3: votanteSchema,
   4: arquivosSchema
 } as const;

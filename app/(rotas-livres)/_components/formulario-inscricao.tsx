@@ -19,6 +19,7 @@ import EtapaDadosVotante from "./etapas/etapa-dados-votante";
 import EtapaEndereco from "./etapas/etapa-endereco";
 import EtapaArquivo from "./etapas/etapa-arquivo";
 import { toast } from "sonner";
+import { isWithinOUCBTPerimeter } from "@/lib/utils/polygon-validation";
 
 const etapas = [
   {
@@ -100,6 +101,20 @@ export default function FormularioInscricao() {
         "endereco.estado", 
         "endereco.cep"
       ]);
+      
+      // Verificar se o endereço está dentro do perímetro
+      if (isValid) {
+        const latitude = getValues("endereco.latitude");
+        const longitude = getValues("endereco.longitude");
+        
+        if (!latitude || !longitude) {
+          toast.error("Por favor, selecione um local no mapa.");
+          isValid = false;
+        } else if (!isWithinOUCBTPerimeter(latitude, longitude)) {
+          toast.error("O endereço selecionado está fora do perímetro permitido. Por favor, selecione um endereço dentro da área de cobertura.");
+          isValid = false;
+        }
+      }
     } else if (etapaAtual === 3) {
       // Etapa 3: Dados do Votante
       const tipoInscricao = getValues("tipoInscricao");
@@ -109,7 +124,7 @@ export default function FormularioInscricao() {
         isValid = await trigger(["votante.nome", "votante.email", "votante.cpf", "votante.dataNascimento"]);
       }
     } else if (etapaAtual === 4) {
-      // Etapa 4: Arquivos
+      // Etapa 4: Documentos
       isValid = await trigger(["arquivos"]);
     }
 
