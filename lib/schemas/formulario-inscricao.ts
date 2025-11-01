@@ -166,12 +166,22 @@ export const arquivosSchema = z.object({
     }, "Apenas arquivos de imagem (JPG, PNG, GIF, WebP) e ZIP são permitidos")
 });
 
+// Schema para Etapa 6: Declarações
+export const declaracoesSchema = z.object({
+  declaracaoIdentidade: z.boolean().refine(val => val === true, "Você deve aceitar esta declaração"),
+  declaracaoVotacao: z.boolean().refine(val => val === true, "Você deve aceitar esta declaração"),
+  declaracaoDocumento: z.boolean().refine(val => val === true, "Você deve aceitar esta declaração"),
+  declaracaoAutorizacao: z.boolean().refine(val => val === true, "Você deve aceitar esta declaração"),
+  declaracaoVeracidade: z.boolean().refine(val => val === true, "Você deve aceitar esta declaração")
+});
+
 // Schema completo do formulário
 export const formularioInscricaoSchema = z.object({
   tipoInscricao: z.enum(["MORADOR", "TRABALHADOR"]),
   votante: votanteSchema,
   endereco: enderecoSchema,
-  arquivos: arquivosSchema
+  arquivos: arquivosSchema,
+  declaracoes: declaracoesSchema
 }).refine((data) => {
   // Se for TRABALHADOR, empresa é obrigatória
   if (data.tipoInscricao === "TRABALHADOR") {
@@ -188,6 +198,7 @@ export type TipoInscricaoFormData = z.infer<typeof tipoInscricaoSchema>;
 export type VotanteFormData = z.infer<typeof votanteSchema>;
 export type EnderecoFormData = z.infer<typeof enderecoSchema>;
 export type ArquivosFormData = z.infer<typeof arquivosSchema>;
+export type DeclaracoesFormData = z.infer<typeof declaracoesSchema>;
 export type FormularioInscricaoData = z.infer<typeof formularioInscricaoSchema>;
 
 // Schemas individuais para cada etapa (para validação parcial)
@@ -195,5 +206,7 @@ export const etapaSchemas = {
   1: tipoInscricaoSchema,
   2: enderecoSchema,
   3: votanteSchema,
-  4: arquivosSchema
+  4: arquivosSchema,
+  5: z.object({}), // Etapa de revisão não precisa de validação
+  6: declaracoesSchema
 } as const;

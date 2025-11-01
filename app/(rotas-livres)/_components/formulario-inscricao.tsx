@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,8 @@ import EtapaTipoInscricao from "./etapas/etapa-tipo-inscricao";
 import EtapaDadosVotante from "./etapas/etapa-dados-votante";
 import EtapaEndereco from "./etapas/etapa-endereco";
 import EtapaArquivo from "./etapas/etapa-arquivo";
+import EtapaRevisaoDados from "./etapas/etapa-revisao-dados";
+import EtapaDeclaracoes from "./etapas/etapa-declaracoes";
 import { toast } from "sonner";
 import { isWithinOUCBTPerimeter } from "@/lib/utils/polygon-validation";
 
@@ -45,6 +47,18 @@ const etapas = [
     titulo: "Documentos",
     descricao: "Envie os documentos necessários",
     component: EtapaArquivo
+  },
+  {
+    id: 5,
+    titulo: "Revisão de Dados",
+    descricao: "Confira todas as informações",
+    component: EtapaRevisaoDados
+  },
+  {
+    id: 6,
+    titulo: "Declarações",
+    descricao: "Aceite as declarações obrigatórias",
+    component: EtapaDeclaracoes
   }
 ];
 
@@ -52,6 +66,7 @@ export default function FormularioInscricao() {
   const [etapaAtual, setEtapaAtual] = useState(1);
   const [etapasCompletas, setEtapasCompletas] = useState<number[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [podeAvancar, setPodeAvancar] = useState(false);
 
   const methods = useForm<FormularioInscricaoData>({
     resolver: zodResolver(formularioInscricaoSchema),
@@ -79,11 +94,73 @@ export default function FormularioInscricao() {
         latitude: null,
         longitude: null
       },
-      arquivos: { arquivos: [] }
+      arquivos: { arquivos: [] },
+      declaracoes: {
+        declaracaoIdentidade: false,
+        declaracaoVotacao: false,
+        declaracaoDocumento: false,
+        declaracaoAutorizacao: false,
+        declaracaoVeracidade: false
+      }
     }
   });
 
-  const { trigger, getValues, handleSubmit, formState: { errors } } = methods;
+  const { trigger, getValues, handleSubmit, formState: { errors }, watch } = methods;
+
+  // Função para verificar se pode avançar para a próxima etapa
+  const verificarPodeAvancar = () => {
+    const dadosEtapa = getValues();
+    
+    switch (etapaAtual) {
+      case 1: // Tipo de Inscrição
+        return !!dadosEtapa.tipoInscricao;
+      
+      case 2: // Endereço
+        const endereco = dadosEtapa.endereco;
+        return !!(endereco?.logradouro && endereco?.bairro && endereco?.cidade && 
+                 endereco?.estado && endereco?.cep && endereco?.latitude && endereco?.longitude);
+      
+      case 3: // Dados Pessoais
+        const votante = dadosEtapa.votante;
+        const tipoInscricao = dadosEtapa.tipoInscricao;
+        const camposBasicos = !!(votante?.nome && votante?.telefone && votante?.genero && 
+                                votante?.email && votante?.cpf && votante?.dataNascimento);
+        const empresaOk = tipoInscricao !== "TRABALHADOR" || !!votante?.empresa;
+        return camposBasicos && empresaOk;
+      
+      case 4: // Documentos
+        return !!(dadosEtapa.arquivos?.arquivos && dadosEtapa.arquivos.arquivos.length > 0);
+      
+      case 5: // Revisão de dados
+        return true; // Sempre pode avançar da revisão
+      
+      case 6: // Declarações
+        const declaracoes = dadosEtapa.declaracoes;
+        return !!(declaracoes?.declaracaoIdentidade && declaracoes?.declaracaoVotacao && 
+                 declaracoes?.declaracaoDocumento && declaracoes?.declaracaoAutorizacao && 
+                 declaracoes?.declaracaoVeracidade);
+      
+      default:
+        return false;
+    }
+  };
+
+  // Monitorar mudanças nos dados para atualizar o estado do botão
+  useEffect(() => {
+    const subscription = watch(() => {
+      setPodeAvancar(verificarPodeAvancar());
+    });
+    
+    // Verificar inicialmente
+    setPodeAvancar(verificarPodeAvancar());
+    
+    return () => subscription.unsubscribe();
+  }, [etapaAtual, watch]);
+
+  // Atualizar quando a etapa muda
+  useEffect(() => {
+    setPodeAvancar(verificarPodeAvancar());
+  }, [etapaAtual]);
 
   const proximaEtapa = async () => {
     console.log("🔍 INICIANDO proximaEtapa - Etapa atual:", etapaAtual);
@@ -191,6 +268,15 @@ export default function FormularioInscricao() {
       console.log("📄 Validando etapa 4 - Documentos");
       isValid = await trigger(["arquivos"]);
       console.log("✅ Resultado validação etapa 4:", isValid);
+    } else if (etapaAtual === 5) {
+      // Etapa 5: Revisão de dados - não precisa validação, apenas avança
+      console.log("👀 Etapa 5 - Revisão de dados (sem validação)");
+      isValid = true;
+    } else if (etapaAtual === 6) {
+      // Etapa 6: Declarações
+      console.log("📋 Validando etapa 6 - Declarações");
+      isValid = await trigger(["declaracoes"]);
+      console.log("✅ Resultado validação etapa 6:", isValid);
     }
 
     console.log("🎯 RESULTADO FINAL DA VALIDAÇÃO:", isValid);
@@ -260,6 +346,13 @@ export default function FormularioInscricao() {
           formData.append(`arquivos[${index}]`, arquivo);
         });
       }
+      
+      // Adicionar declarações
+      formData.append("declaracoes.declaracaoIdentidade", data.declaracoes.declaracaoIdentidade.toString());
+      formData.append("declaracoes.declaracaoVotacao", data.declaracoes.declaracaoVotacao.toString());
+      formData.append("declaracoes.declaracaoDocumento", data.declaracoes.declaracaoDocumento.toString());
+      formData.append("declaracoes.declaracaoAutorizacao", data.declaracoes.declaracaoAutorizacao.toString());
+      formData.append("declaracoes.declaracaoVeracidade", data.declaracoes.declaracaoVeracidade.toString());
 
       // Enviar para a API
       const response = await fetch("/api/inscricao", {
@@ -338,6 +431,7 @@ export default function FormularioInscricao() {
                       console.log("🖱️ BOTÃO PRÓXIMA CLICADO!");
                       proximaEtapa();
                     }}
+                    disabled={!podeAvancar}
                     className="flex items-center space-x-2"
                   >
                     <span>Próxima</span>

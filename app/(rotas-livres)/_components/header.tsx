@@ -7,10 +7,11 @@ export default function Header() {
             <div 
                 className="absolute inset-0 bg-cover bg-center bg-no-repeat"
                 style={{
-                    backgroundImage: "url('/fundo.jpg')"
+                    backgroundImage: "url('/fundo.jpg')",
+                    filter: "grayscale(100%)",
                 }}
             />
-            <div className="absolute inset-0 bg-black/60" />
+            <div className="absolute inset-0 bg-[#3d0c59]/80" />
             <div className="relative z-10 flex justify-between items-center p-8 gap-4">
                 <Link href="https://www.prefeitura.sp.gov.br/" target="_blank">
                     <Image

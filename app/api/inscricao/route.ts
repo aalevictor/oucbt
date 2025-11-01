@@ -46,6 +46,13 @@ export async function POST(request: NextRequest) {
       },
       arquivos: {
         arquivos: arquivos
+      },
+      declaracoes: {
+        declaracaoIdentidade: formData.get("declaracoes.declaracaoIdentidade") === "true",
+        declaracaoVotacao: formData.get("declaracoes.declaracaoVotacao") === "true",
+        declaracaoDocumento: formData.get("declaracoes.declaracaoDocumento") === "true",
+        declaracaoAutorizacao: formData.get("declaracoes.declaracaoAutorizacao") === "true",
+        declaracaoVeracidade: formData.get("declaracoes.declaracaoVeracidade") === "true"
       }
     };
 

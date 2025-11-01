@@ -264,7 +264,7 @@ const MapaEnderecoOpenLayers: React.FC<MapaEnderecoOpenLayersProps> = ({
       ],
       view: new View({
         center: fromLonLat([-46.6333, -23.5505]), // São Paulo
-        zoom: 10,
+        zoom: 12.5,
       }),
       controls: defaultControls({
         zoom: false, // Remover controles padrão de zoom
