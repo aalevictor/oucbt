@@ -76,44 +76,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Processar arquivos
-    const arquivosSalvos: { nome: string; tipo: string; tamanho: number; caminho: string }[] = [];
-    
-    if (dadosValidados.arquivos && dadosValidados.arquivos.arquivos && dadosValidados.arquivos.arquivos.length > 0) {
-      // Criar diretório de uploads se não existir
-      const uploadsDir = join(process.cwd(), "uploads");
-      if (!existsSync(uploadsDir)) {
-        await mkdir(uploadsDir, { recursive: true });
-      }
-
-      for (const arquivo of dadosValidados.arquivos.arquivos) {
-        // Gerar nome único para o arquivo
-        const timestamp = Date.now();
-        const random = Math.random().toString(36).substring(2);
-        const nomeArquivo = `${timestamp}-${random}-${arquivo.name}`;
-        const caminhoArquivo = join(uploadsDir, nomeArquivo);
-
-        // Salvar arquivo
-        const bytes = await arquivo.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-        await writeFile(caminhoArquivo, buffer);
-
-        arquivosSalvos.push({
-          nome: arquivo.name,
-          tipo: arquivo.type,
-          tamanho: arquivo.size,
-          caminho: caminhoArquivo
-        });
-      }
-    }
-
     // Salvar no banco de dados usando transação
     const resultado = await db.$transaction(async (tx) => {
-      // Criar votante
+      // Criar votante primeiro para obter o ID
       const votante = await tx.votante.create({
         data: {
           tipoInscricao: dadosValidados.tipoInscricao,
           nome: dadosValidados.votante.nome,
+          nomeSocial: dadosValidados.votante.nomeSocial || null,
+          telefone: dadosValidados.votante.telefone,
+          genero: dadosValidados.votante.genero,
           email: dadosValidados.votante.email.toLowerCase(),
           cpf: dadosValidados.votante.cpf.replace(/[^\d]/g, ''),
           dataNascimento: new Date(dadosValidados.votante.dataNascimento),
@@ -137,6 +109,43 @@ export async function POST(request: NextRequest) {
           votanteId: votante.id,
         }
       });
+
+      // Processar e salvar arquivos após ter o ID do votante
+      const arquivosSalvos: { nome: string; tipo: string; tamanho: number; caminho: string }[] = [];
+      
+      if (dadosValidados.arquivos && dadosValidados.arquivos.arquivos && dadosValidados.arquivos.arquivos.length > 0) {
+        // Criar diretório específico para o votante
+        const uploadsDir = join(process.cwd(), "uploads");
+        const votanteDir = join(uploadsDir, votante.id.toString());
+        
+        if (!existsSync(uploadsDir)) {
+          await mkdir(uploadsDir, { recursive: true });
+        }
+        
+        if (!existsSync(votanteDir)) {
+          await mkdir(votanteDir, { recursive: true });
+        }
+
+        for (const arquivo of dadosValidados.arquivos.arquivos) {
+          // Gerar nome único para o arquivo
+          const timestamp = Date.now();
+          const random = Math.random().toString(36).substring(2);
+          const nomeArquivo = `${timestamp}-${random}-${arquivo.name}`;
+          const caminhoArquivo = join(votanteDir, nomeArquivo);
+
+          // Salvar arquivo
+          const bytes = await arquivo.arrayBuffer();
+          const buffer = Buffer.from(bytes);
+          await writeFile(caminhoArquivo, buffer);
+
+          arquivosSalvos.push({
+            nome: arquivo.name,
+            tipo: arquivo.type,
+            tamanho: arquivo.size,
+            caminho: caminhoArquivo
+          });
+        }
+      }
 
       // Criar registros dos arquivos
       for (const arquivoSalvo of arquivosSalvos) {
