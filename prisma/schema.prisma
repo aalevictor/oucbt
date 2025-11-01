@@ -37,11 +37,20 @@ enum TipoInscricao {
     TRABALHADOR
 }
 
+enum Genero {
+    MASCULINO
+    FEMININO
+    OUTRO
+}
+
 model Votante {
     id                     String                 @id @default(uuid())
     tipoInscricao          TipoInscricao          @default(MORADOR)
     empresa                String?
     nome                   String
+    nomeSocial             String?
+    telefone               String?
+    genero                 Genero                 @default(OUTRO)
     email                  String                 @unique
     cpf                    String                 @unique
     dataNascimento         DateTime               @db.Date

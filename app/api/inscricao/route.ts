@@ -25,6 +25,9 @@ export async function POST(request: NextRequest) {
       tipoInscricao: formData.get("tipoInscricao") as "MORADOR" | "TRABALHADOR",
       votante: {
         nome: formData.get("votante.nome") as string,
+        nomeSocial: formData.get("votante.nomeSocial") as string || undefined,
+        telefone: formData.get("votante.telefone") as string,
+        genero: formData.get("votante.genero") as "MASCULINO" | "FEMININO" | "OUTRO",
         email: formData.get("votante.email") as string,
         cpf: formData.get("votante.cpf") as string,
         dataNascimento: formData.get("votante.dataNascimento") as string,
@@ -41,7 +44,9 @@ export async function POST(request: NextRequest) {
         latitude: formData.get("endereco.latitude") ? parseFloat(formData.get("endereco.latitude") as string) : null,
         longitude: formData.get("endereco.longitude") ? parseFloat(formData.get("endereco.longitude") as string) : null,
       },
-      arquivos: arquivos
+      arquivos: {
+        arquivos: arquivos
+      }
     };
 
     // Validar dados com o schema

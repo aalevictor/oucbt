@@ -43,6 +43,23 @@ export const votanteSchema = z.object({
     .max(100, "Nome deve ter no máximo 100 caracteres")
     .regex(/^[a-zA-ZÀ-ÿ\s]+$/, "Nome deve conter apenas letras e espaços"),
   
+  nomeSocial: z
+    .string()
+    .max(100, "Nome social deve ter no máximo 100 caracteres")
+    .regex(/^[a-zA-ZÀ-ÿ\s]*$/, "Nome social deve conter apenas letras e espaços")
+    .optional()
+    .or(z.literal("")),
+  
+  telefone: z
+    .string()
+    .min(1, "Telefone é obrigatório")
+    .regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, "Telefone deve ter o formato (00) 00000-0000"),
+  
+  genero: z.enum(["MASCULINO", "FEMININO", "OUTRO"], {
+    required_error: "Selecione o gênero",
+    invalid_type_error: "Gênero inválido"
+  }),
+  
   email: z
     .string()
     .email("Email inválido")
@@ -127,9 +144,11 @@ export const arquivosSchema = z.object({
   arquivos: z
     .array(z.instanceof(File))
     .min(1, "Selecione pelo menos um arquivo")
+    .max(5, "Máximo de 5 arquivos permitidos")
     .refine((files) => {
-      return files.every(file => file.size <= 10 * 1024 * 1024);
-    }, "Cada arquivo deve ter no máximo 10MB")
+      const tamanhoTotal = files.reduce((total, file) => total + file.size, 0);
+      return tamanhoTotal <= 30 * 1024 * 1024; // 30MB
+    }, "O tamanho total dos arquivos não pode exceder 30MB")
     .refine((files) => {
       const tiposPermitidos = [
         'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',

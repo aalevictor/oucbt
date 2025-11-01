@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE `votantes` ADD COLUMN `genero` ENUM('MASCULINO', 'FEMININO', 'OUTRO') NOT NULL DEFAULT 'OUTRO',
+    ADD COLUMN `nomeSocial` VARCHAR(191) NULL,
+    ADD COLUMN `telefone` VARCHAR(191) NULL;

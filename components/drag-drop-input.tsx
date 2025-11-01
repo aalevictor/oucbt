@@ -5,6 +5,7 @@
 import {
 	useState,
 	useRef,
+	useEffect,
 	type DragEvent,
 	type ChangeEvent,
 	forwardRef,
@@ -70,6 +71,13 @@ const DragDropInput = forwardRef<DragDropInputRef, DragDropInputProps>(
 		const [files, setFiles] = useState<FileWithPreview[]>(value || []);
 		const [isDragging, setIsDragging] = useState(false);
 		const fileInputRef = useRef<HTMLInputElement>(null);
+
+		// Sincronizar estado local com valor do formulário
+		useEffect(() => {
+			if (value !== files) {
+				setFiles(value || []);
+			}
+		}, [value, files]);
 
 		// Referência interna para o input que será usada com register
 		// const internalInputRef = useRef<HTMLInputElement>(null);
@@ -318,6 +326,8 @@ const DragDropInput = forwardRef<DragDropInputRef, DragDropInputProps>(
 											<Image
 												src={file.preview || '/placeholder.svg'}
 												alt={file.name}
+												width={32}
+												height={32}
 												className='w-8 h-8 object-cover rounded-md mr-2'
 											/>
 										) : (

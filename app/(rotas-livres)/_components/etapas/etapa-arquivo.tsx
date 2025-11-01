@@ -89,8 +89,8 @@ export default function EtapaArquivo() {
           <strong>Requisitos dos arquivos:</strong>
           <ul className="mt-2 space-y-1 text-sm">
             <li>• Tipos aceitos: Imagens (JPG, PNG, GIF, WebP) e arquivos ZIP</li>
-            <li>• Tamanho individual: Máximo 10MB por arquivo</li>
-            <li>• Quantidade: Pelo menos 1 arquivo</li>
+            <li>• Máximo 5 arquivos</li>
+            <li>• Tamanho total: Máximo 30MB (todos os arquivos)</li>
           </ul>
         </AlertDescription>
       </Alert>
@@ -109,12 +109,12 @@ export default function EtapaArquivo() {
               }}
               value={field.value || []}
               multiple={true}
-              maxFiles={10}
-              maxSize={10 * 1024 * 1024} // 10MB por arquivo
+              maxFiles={5}
+              maxSize={30 * 1024 * 1024} // 30MB total
               accept="image/*,.zip"
               buttonText="Selecionar arquivos"
               dropzoneText="Arraste e solte seus arquivos aqui"
-              helperText="Imagens (JPG, PNG, GIF, WebP) e arquivos ZIP aceitos. Máximo 10MB por arquivo"
+              helperText="Imagens (JPG, PNG, GIF, WebP) e arquivos ZIP aceitos. Máximo 5 arquivos e 30MB total"
               error={errors.arquivos?.message}
             />
           )}
@@ -122,7 +122,7 @@ export default function EtapaArquivo() {
       </div>
 
       {/* Exibir informações dos arquivos selecionados */}
-      {arquivosInfo.length > 0 && (
+      {/* {arquivosInfo.length > 0 && (
         <div className="mt-4 space-y-2">
           <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
             Arquivos selecionados ({arquivosInfo.length})
@@ -146,7 +146,7 @@ export default function EtapaArquivo() {
             ))}
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Mostrar erro se houver */}
       {errors.arquivos && (

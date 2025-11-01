@@ -60,6 +60,9 @@ export default function FormularioInscricao() {
       tipoInscricao: undefined as any,
       votante: {
         nome: "",
+        nomeSocial: "",
+        telefone: "",
+        genero: undefined as any,
         email: "",
         cpf: "",
         dataNascimento: "",
@@ -83,17 +86,23 @@ export default function FormularioInscricao() {
   const { trigger, getValues, handleSubmit, formState: { errors } } = methods;
 
   const proximaEtapa = async () => {
+    console.log("🔍 INICIANDO proximaEtapa - Etapa atual:", etapaAtual);
+    
     const etapaSchema = etapaSchemas[etapaAtual as keyof typeof etapaSchemas];
     const dadosEtapa = getValues();
+    console.log("Dados da etapa:", dadosEtapa);
     
     let isValid = false;
     
     // Validar dados específicos da etapa atual
     if (etapaAtual === 1) {
       // Etapa 1: Tipo de Inscrição
+      console.log("📝 Validando etapa 1 - Tipo de Inscrição");
       isValid = await trigger(["tipoInscricao"]);
+      console.log("✅ Resultado validação etapa 1:", isValid);
     } else if (etapaAtual === 2) {
       // Etapa 2: Endereço
+      console.log("🏠 Validando etapa 2 - Endereço");
       isValid = await trigger([
         "endereco.logradouro", 
         "endereco.bairro", 
@@ -101,42 +110,107 @@ export default function FormularioInscricao() {
         "endereco.estado", 
         "endereco.cep"
       ]);
+      console.log("📍 Resultado validação campos endereço:", isValid);
       
       // Verificar se o endereço está dentro do perímetro
       if (isValid) {
         const latitude = getValues("endereco.latitude");
         const longitude = getValues("endereco.longitude");
+        console.log("🌍 Coordenadas:", { latitude, longitude });
         
         if (!latitude || !longitude) {
+          console.log("❌ Coordenadas não encontradas");
           toast.error("Por favor, selecione um local no mapa.");
           isValid = false;
-        } else if (!isWithinOUCBTPerimeter(latitude, longitude)) {
-          toast.error("O endereço selecionado está fora do perímetro permitido. Por favor, selecione um endereço dentro da área de cobertura.");
-          isValid = false;
+        } else {
+          console.log("🔍 Verificando perímetro...");
+          const dentroPerimetro = await isWithinOUCBTPerimeter(latitude, longitude);
+          console.log("🎯 Dentro do perímetro:", dentroPerimetro);
+          if (!dentroPerimetro) {
+            toast.error("O endereço selecionado está fora do perímetro permitido. Por favor, selecione um endereço dentro da área de cobertura.");
+            isValid = false;
+          }
         }
       }
+      console.log("✅ Resultado final etapa 2:", isValid);
     } else if (etapaAtual === 3) {
       // Etapa 3: Dados do Votante
+      console.log("👤 Validando etapa 3 - Dados do Votante");
       const tipoInscricao = getValues("tipoInscricao");
+      console.log("📋 Tipo de inscrição:", tipoInscricao);
+      
+      const camposObrigatorios = [
+        "votante.nome",
+        "votante.telefone",
+        "votante.genero",
+        "votante.email",
+        "votante.cpf",
+        "votante.dataNascimento"
+      ];
+      
       if (tipoInscricao === "TRABALHADOR") {
-        isValid = await trigger(["votante.nome", "votante.email", "votante.cpf", "votante.dataNascimento", "votante.empresa"]);
-      } else {
-        isValid = await trigger(["votante.nome", "votante.email", "votante.cpf", "votante.dataNascimento"]);
+        camposObrigatorios.push("votante.empresa");
       }
+      
+      console.log("📝 Campos obrigatórios:", camposObrigatorios);
+      
+      // Inicializar como true antes da validação
+      isValid = true;
+      
+      // Validar cada campo individualmente
+      for (const campo of camposObrigatorios) {
+        const valor = getValues(campo as any);
+        console.log(`🔍 Validando ${campo}:`, valor);
+        const resultado = await trigger(campo as any);
+        console.log(`${resultado ? '✅' : '❌'} ${campo}: ${resultado}`);
+        if (!resultado) {
+          isValid = false;
+          break;
+        }
+      }
+      
+      console.log("🔍 Valor de isValid antes da validação completa:", isValid);
+      if (isValid) {
+        console.log("🔍 Validando objeto votante completo...");
+        const votanteData = getValues("votante");
+        console.log("📊 Dados do votante:", votanteData);
+        
+        isValid = await trigger("votante");
+        console.log("✅ Resultado validação votante completo:", isValid);
+        
+        // Se falhou, vamos ver os erros específicos
+        if (!isValid) {
+          const errors = methods.formState.errors;
+          console.log("❌ Erros encontrados:", errors);
+        }
+      }
+      
+      console.log("✅ Resultado final etapa 3:", isValid);
     } else if (etapaAtual === 4) {
       // Etapa 4: Documentos
+      console.log("📄 Validando etapa 4 - Documentos");
       isValid = await trigger(["arquivos"]);
+      console.log("✅ Resultado validação etapa 4:", isValid);
     }
 
+    console.log("🎯 RESULTADO FINAL DA VALIDAÇÃO:", isValid);
+
     if (isValid) {
+      console.log("✅ Validação passou! Avançando para próxima etapa...");
       // Marcar etapa como completa
       if (!etapasCompletas.includes(etapaAtual)) {
         setEtapasCompletas([...etapasCompletas, etapaAtual]);
+        console.log("📋 Etapa marcada como completa:", etapaAtual);
       }
       
       if (etapaAtual < etapas.length) {
+        console.log(`➡️ Avançando da etapa ${etapaAtual} para ${etapaAtual + 1}`);
         setEtapaAtual(etapaAtual + 1);
+      } else {
+        console.log("🏁 Última etapa alcançada!");
       }
+    } else {
+      console.log("❌ Validação falhou! Não é possível avançar.");
     }
   };
 
@@ -157,6 +231,11 @@ export default function FormularioInscricao() {
       
       // Adicionar dados do votante
       formData.append("votante.nome", data.votante.nome);
+      if (data.votante.nomeSocial) {
+        formData.append("votante.nomeSocial", data.votante.nomeSocial);
+      }
+      formData.append("votante.telefone", data.votante.telefone);
+      formData.append("votante.genero", data.votante.genero);
       formData.append("votante.email", data.votante.email);
       formData.append("votante.cpf", data.votante.cpf);
       formData.append("votante.dataNascimento", data.votante.dataNascimento);
@@ -255,7 +334,10 @@ export default function FormularioInscricao() {
                 {etapaAtual < etapas.length ? (
                   <Button
                     type="button"
-                    onClick={proximaEtapa}
+                    onClick={() => {
+                      console.log("🖱️ BOTÃO PRÓXIMA CLICADO!");
+                      proximaEtapa();
+                    }}
                     className="flex items-center space-x-2"
                   >
                     <span>Próxima</span>

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, AlertCircle, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { FormularioInscricaoData } from "@/lib/schemas/formulario-inscricao";
@@ -33,6 +34,30 @@ function formatarCPF(cpf: string): string {
   return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 }
 
+// Função para formatar telefone
+function formatarTelefone(telefone: string): string {
+  telefone = telefone.replace(/[^\d]/g, '');
+  
+  if (telefone.length === 0) {
+    return '';
+  }
+  
+  if (telefone.length <= 2) {
+    return `(${telefone}`;
+  }
+  
+  if (telefone.length <= 6) {
+    return `(${telefone.slice(0, 2)}) ${telefone.slice(2)}`;
+  }
+  
+  if (telefone.length <= 10) {
+    return `(${telefone.slice(0, 2)}) ${telefone.slice(2, 6)}-${telefone.slice(6)}`;
+  }
+  
+  // Para telefones com 11 dígitos (celular)
+  return `(${telefone.slice(0, 2)}) ${telefone.slice(2, 7)}-${telefone.slice(7, 11)}`;
+}
+
 export default function EtapaDadosVotante() {
   const { 
     register, 
@@ -50,6 +75,7 @@ export default function EtapaDadosVotante() {
 
   const cpfValue = watch("votante.cpf");
   const emailValue = watch("votante.email");
+  const telefoneValue = watch("votante.telefone");
   const tipoInscricao = watch("tipoInscricao");
 
   // Validação de CPF em tempo real
@@ -143,6 +169,13 @@ export default function EtapaDadosVotante() {
     }
   };
 
+  // Handler para formatação do telefone
+  const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const valor = e.target.value;
+    const telefoneFormatado = formatarTelefone(valor);
+    setValue("votante.telefone", telefoneFormatado);
+  };
+
   return (
     <div className="space-y-6">
       {/* Nome Completo */}
@@ -160,6 +193,72 @@ export default function EtapaDadosVotante() {
           <p className="text-sm text-red-500 flex items-center gap-1">
             <AlertCircle className="w-4 h-4" />
             {errors.votante.nome.message}
+          </p>
+        )}
+      </div>
+
+      {/* Nome Social */}
+      <div className="space-y-2">
+        <Label htmlFor="nomeSocial">Nome Social</Label>
+        <Input
+          id="nomeSocial"
+          {...register("votante.nomeSocial")}
+          placeholder="Digite seu nome social (opcional)"
+          className={cn(
+            errors.votante?.nomeSocial && "border-red-500 focus-visible:ring-red-500"
+          )}
+        />
+        {errors.votante?.nomeSocial && (
+          <p className="text-sm text-red-500 flex items-center gap-1">
+            <AlertCircle className="w-4 h-4" />
+            {errors.votante.nomeSocial.message}
+          </p>
+        )}
+      </div>
+
+      {/* Telefone */}
+      <div className="space-y-2">
+        <Label htmlFor="telefone">Telefone *</Label>
+        <Input
+          id="telefone"
+          {...register("votante.telefone")}
+          onChange={handleTelefoneChange}
+          placeholder="Digite seu telefone"
+          maxLength={15}
+          className={cn(
+            errors.votante?.telefone && "border-red-500 focus-visible:ring-red-500"
+          )}
+        />
+        {errors.votante?.telefone && (
+          <p className="text-sm text-red-500 flex items-center gap-1">
+            <AlertCircle className="w-4 h-4" />
+            {errors.votante.telefone.message}
+          </p>
+        )}
+      </div>
+
+      {/* Gênero */}
+      <div className="space-y-2">
+        <Label htmlFor="genero">Gênero *</Label>
+        <Select
+          onValueChange={(value) => setValue("votante.genero", value as "MASCULINO" | "FEMININO" | "OUTRO")}
+          value={watch("votante.genero")}
+        >
+          <SelectTrigger className={cn(
+            errors.votante?.genero && "border-red-500 focus-visible:ring-red-500"
+          )}>
+            <SelectValue placeholder="Selecione seu gênero" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="MASCULINO">Masculino</SelectItem>
+            <SelectItem value="FEMININO">Feminino</SelectItem>
+            <SelectItem value="OUTRO">Outro</SelectItem>
+          </SelectContent>
+        </Select>
+        {errors.votante?.genero && (
+          <p className="text-sm text-red-500 flex items-center gap-1">
+            <AlertCircle className="w-4 h-4" />
+            {errors.votante.genero.message}
           </p>
         )}
       </div>
