@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -63,6 +64,7 @@ const etapas = [
 ];
 
 export default function FormularioInscricao() {
+  const router = useRouter();
   const [etapaAtual, setEtapaAtual] = useState(1);
   const [etapasCompletas, setEtapasCompletas] = useState<number[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -366,12 +368,8 @@ export default function FormularioInscricao() {
         throw new Error(resultado.error || "Erro ao enviar formulário");
       }
 
-      toast.success("Inscrição realizada com sucesso! Seus dados foram salvos e estão aguardando aprovação.");
-      
-      // Resetar formulário após sucesso
-      methods.reset();
-      setEtapaAtual(1);
-      setEtapasCompletas([]);
+      // Redirecionar para página de agradecimento
+      router.push("/agradecimento");
       
     } catch (error) {
       const mensagem = error instanceof Error ? error.message : "Erro ao realizar inscrição. Tente novamente.";

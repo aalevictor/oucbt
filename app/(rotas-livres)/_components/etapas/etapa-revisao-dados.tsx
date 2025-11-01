@@ -50,21 +50,9 @@ export default function EtapaRevisaoDados() {
           Confira todas as informações antes de prosseguir para as declarações
         </p>
       </div>
-
-      {/* Tipo de Inscrição */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <User className="w-5 h-5" />
-            Tipo de Inscrição
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Badge variant={tipoInscricao === "MORADOR" ? "default" : "secondary"} className="text-sm">
-            {tipoInscricao === "MORADOR" ? "Morador" : "Trabalhador"}
-          </Badge>
-        </CardContent>
-      </Card>
+      <Badge variant={tipoInscricao === "MORADOR" ? "default" : "secondary"} className="text-sm capitalize mx-auto block">
+        {tipoInscricao === "MORADOR" ? "Morador" : "Trabalhador"}
+      </Badge>
 
       {/* Dados Pessoais */}
       <Card>

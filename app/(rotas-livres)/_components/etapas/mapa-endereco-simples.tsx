@@ -184,11 +184,7 @@ const MapaEnderecoOpenLayers: React.FC<MapaEnderecoOpenLayersProps> = ({
       features.forEach(feature => {
         feature.setStyle(new Style({
           fill: new Fill({
-            color: 'rgba(135, 206, 250, 0.2)', // Azul claro com opacidade baixa
-          }),
-          stroke: new Stroke({
-            color: 'rgba(70, 130, 180, 0.8)', // Azul mais escuro para a borda
-            width: 2,
+            color: 'rgba(128, 71, 155, 0.3)', // Azul claro com opacidade baixa
           }),
         }));
       });
@@ -243,12 +239,8 @@ const MapaEnderecoOpenLayers: React.FC<MapaEnderecoOpenLayersProps> = ({
       source: new VectorSource(),
       style: new Style({
         fill: new Fill({
-          color: 'rgba(135, 206, 250, 0.15)', // Azul claro com baixa opacidade
-        }),
-        stroke: new Stroke({
-          color: 'rgba(70, 130, 180, 0.6)', // Azul mais escuro para a borda
-          width: 1.5,
-        }),
+          color: 'rgba(128, 71, 155, 0.3)', // Azul claro com baixa opacidade
+        })
       }),
     });
 
@@ -263,7 +255,7 @@ const MapaEnderecoOpenLayers: React.FC<MapaEnderecoOpenLayersProps> = ({
         markerLayerRef.current,
       ],
       view: new View({
-        center: fromLonLat([-46.6333, -23.5505]), // São Paulo
+        center: fromLonLat([-46.595, -23.58]), // Centro do KML OUC Bairros do Tamanduateí
         zoom: 12.5,
       }),
       controls: defaultControls({
