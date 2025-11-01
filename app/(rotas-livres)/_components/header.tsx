@@ -20,7 +20,7 @@ export default function Header() {
                         height={290}
                     />
                     <Image
-                        src="/sis-icon.png"
+                        src="/prefeitura/brasao.png"
                         alt="Prefeitura de São Paulo"
                         className="md:hidden w-36 h-auto"
                         width={900}

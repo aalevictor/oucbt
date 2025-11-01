@@ -9,7 +9,7 @@ import VectorSource from "ol/source/Vector";
 import OSM from "ol/source/OSM";
 import { fromLonLat, toLonLat } from "ol/proj";
 import { Feature } from "ol";
-import { Point, Polygon } from "ol/geom";
+import { Point } from "ol/geom";
 import { Style, Fill, Stroke, Circle } from "ol/style";
 import { defaults as defaultControls } from "ol/control";
 import KML from "ol/format/KML";

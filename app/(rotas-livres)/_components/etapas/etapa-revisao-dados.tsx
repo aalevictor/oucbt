@@ -1,10 +1,9 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { CheckCircle, User, MapPin, Building, FileText } from "lucide-react";
+import { User, MapPin, FileText } from "lucide-react";
 import type { FormularioInscricaoData } from "@/lib/schemas/formulario-inscricao";
 
 export default function EtapaRevisaoDados() {

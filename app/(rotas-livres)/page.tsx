@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { MapPin, Calendar, Users, FileText, ArrowRight, Info } from "lucide-react";
+import { FileText, ArrowRight } from "lucide-react";
 import MapaVisualizacao from "./_components/mapa-visualizacao";
 
 export default function Home() {

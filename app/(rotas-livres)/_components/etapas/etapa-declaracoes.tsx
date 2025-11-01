@@ -1,12 +1,11 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { FileText, AlertTriangle, ExternalLink } from "lucide-react";
+import { AlertTriangle, ExternalLink } from "lucide-react";
 import type { FormularioInscricaoData } from "@/lib/schemas/formulario-inscricao";
 
 export default function EtapaDeclaracoes() {

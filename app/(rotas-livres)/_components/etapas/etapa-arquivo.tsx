@@ -4,7 +4,7 @@ import { useFormContext, Controller } from "react-hook-form";
 import { useState, useEffect, useCallback } from "react";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, FileArchive, Info } from "lucide-react";
+import { AlertCircle, Info } from "lucide-react";
 import DragDropInput from "@/components/drag-drop-input";
 import type { FormularioInscricaoData } from "@/lib/schemas/formulario-inscricao";
 
