@@ -2,15 +2,21 @@
 
 @plugin "tailwindcss-animate";
 
-/* Estilos para mapa em tela cheia */
-html, body {
+/* Estilos para mapa em tela cheia - aplicar apenas quando necessário */
+.map-fullscreen {
+  overflow: hidden;
+  height: 100vh;
+}
+
+.map-fullscreen html,
+.map-fullscreen body {
   margin: 0;
   padding: 0;
   height: 100%;
   overflow: hidden;
 }
 
-#__next {
+.map-fullscreen #__next {
   height: 100%;
 }
 
@@ -25,6 +31,70 @@ html, body {
   left: auto;
 }
 
+/* Esconder controle de rotação */
+.ol-rotate {
+  display: none !important;
+}
+
+/* Esconder qualquer controle no canto superior esquerdo */
+.ol-control.ol-rotate {
+  display: none !important;
+}
+
+/* Estilos personalizados para atribuição do mapa */
+.ol-attribution {
+  position: absolute !important;
+  bottom: 8px !important;
+  left: 8px !important;
+  right: auto !important;
+  top: auto !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  border-radius: 4px !important;
+  padding: 2px 6px !important;
+  font-size: 10px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  max-width: 150px !important;
+  font-family: Arial, sans-serif !important;
+}
+
+.ol-attribution ul {
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+.ol-attribution li {
+  display: inline !important;
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.ol-attribution li:not(:last-child):after {
+  content: " | " !important;
+  color: #999 !important;
+}
+
+.ol-attribution a {
+  color: #555 !important;
+  text-decoration: none !important;
+  font-weight: normal !important;
+}
+
+.ol-attribution a:hover {
+  color: #333 !important;
+  text-decoration: underline !important;
+}
+
+/* Esconder elementos desnecessários da atribuição */
+.ol-attribution button {
+  display: none !important;
+}
+
+.ol-attribution .ol-attribution-expand {
+  display: none !important;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -34,7 +104,7 @@ html, body {
   --card-foreground: oklch(0.1450 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.1450 0 0);
-  --primary: oklch(0.6109 0.1765 266.0100);
+  --primary: oklch(0.3609 0.0765 314.4300);
   --primary-foreground: oklch(0.9850 0 0);
   --secondary: oklch(0.9700 0 0);
   --secondary-foreground: oklch(0.2050 0 0);

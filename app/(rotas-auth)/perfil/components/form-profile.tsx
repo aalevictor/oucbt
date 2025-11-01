@@ -74,13 +74,12 @@ export default function FormProfile({ user, id }: FormProfileProps) {
 								permissao: dataResp.permissao,
 							},
 						});
-						console.log('Sessão atualizada:', updateSession); // Para depuração
+
 					}
 
 					toast.success('Usuário atualizado com sucesso');
 				}
 			} catch (error) {
-				console.log(error);
 				toast.error('Algo deu errado');
 			} finally {
 				window.location.reload();

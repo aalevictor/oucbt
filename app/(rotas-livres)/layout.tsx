@@ -1,9 +1,13 @@
-import { redirect } from "next/navigation";
-import { auth } from "@/auth";
+import { Badge } from "@/components/ui/badge";
+import Header from "./_components/header";
 
 export default async function RotasLivres({children}:{children: React.ReactNode}) {
-  const session = await auth();
-  console.log(session);
-  if (session) redirect('/');
-  return <>{children}</>;
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main className="container mx-auto py-8">
+        {children}
+      </main>
+    </div>
+  );
 }
