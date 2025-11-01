@@ -17,7 +17,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
         setStoredValue(JSON.parse(item));
       }
     } catch (error) {
-      console.log(error);
+      // Erro ao carregar do localStorage
     }
   }, [key]);
 
@@ -34,7 +34,6 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       }
     } catch (error) {
       // Uma implementação mais avançada lidaria com o caso de erro
-      console.log(error);
     }
   };
 

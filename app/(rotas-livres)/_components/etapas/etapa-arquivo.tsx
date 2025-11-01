@@ -69,7 +69,7 @@ export default function EtapaArquivo() {
       <Alert>
         <Info className="h-4 w-4" />
         <AlertDescription>
-          <strong>Documentos necessários para {tipoInscricao === "TRABALHADOR" ? "Trabalhador" : "Morador"}:</strong>
+          <strong>Documentos necessários para {tipoInscricao === "TRABALHADOR" ? "Trabalhador na" : "Morador da"} região, segundo <a className="text-blue-600 hover:underline" href="https://gestaourbana.prefeitura.sp.gov.br/wp-content/uploads/2025/09/Edital_002_2025_SPURB_OUCBT_Trabalhadores_e_251017_092250-1.pdf" target="_blank">Edital Nº 002/2025/SPURB/OUCBT:</a></strong>
           <ul className="mt-2 space-y-1 text-sm">
             <li>• Documento oficial com foto</li>
             <li>• CPF (caso não conste no documento de identificação)</li>

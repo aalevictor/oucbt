@@ -194,8 +194,6 @@ const MapaEnderecoOpenLayers: React.FC<MapaEnderecoOpenLayersProps> = ({
         source.clear(); // Limpar features existentes
         source.addFeatures(features);
       }
-      
-      console.log(`KML carregado com ${features.length} features`);
     } catch (error) {
       console.error("Erro ao carregar KML:", error);
       toast.error("Erro ao carregar dados do mapa.");

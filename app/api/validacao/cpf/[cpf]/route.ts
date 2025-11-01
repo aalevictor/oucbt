@@ -7,7 +7,6 @@ export async function GET(
 ) {
   try {
     const { cpf } = await context.params;
-    console.log(cpf);
     if (!cpf) {
       return NextResponse.json(
         { error: "CPF é obrigatório" },

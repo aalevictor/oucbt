@@ -43,14 +43,7 @@ export default function EtapaRevisaoDados() {
 
   return (
     <div className="space-y-6">
-      <div className="text-center">
-        <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-        <h3 className="text-xl font-semibold mb-2">Revisão dos Dados</h3>
-        <p className="text-muted-foreground">
-          Confira todas as informações antes de prosseguir para as declarações
-        </p>
-      </div>
-      <Badge variant={tipoInscricao === "MORADOR" ? "default" : "secondary"} className="text-sm capitalize mx-auto block">
+      <Badge variant={tipoInscricao === "MORADOR" ? "success" : "default"} className="text-sm capitalize mx-auto block">
         {tipoInscricao === "MORADOR" ? "Morador" : "Trabalhador"}
       </Badge>
 

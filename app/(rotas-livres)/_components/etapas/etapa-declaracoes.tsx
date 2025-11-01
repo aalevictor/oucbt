@@ -49,7 +49,7 @@ export default function EtapaDeclaracoes() {
 
   const todasDeclaracoesAceitas = declaracoes && Object.values(declaracoes).every(Boolean);
 
-  // Construir a declaração de identidade dinamicamente
+  // Construir a declaração de identidade dinamicamente como JSX
   const construirDeclaracaoIdentidade = () => {
     const nomeParticipante = votante?.nome || "[nome do participante]";
     const cpfFormatado = votante?.cpf ? formatarCPF(votante.cpf) : "[cpf formatado]";
@@ -72,24 +72,52 @@ export default function EtapaDeclaracoes() {
       localDeclaracao = `resido/tenho domicilio na ${logradouro}, numero ${numero}, CEP ${cep}`;
     }
 
-    let solicitacaoNomeSocial = "";
-    if (votante?.nomeSocial && votante.nomeSocial.trim() !== "") {
-      solicitacaoNomeSocial = ` SOLICITO, conforme Decreto n°51.180/2010, a inclusão e uso do meu nome social ${votante.nomeSocial} nos documentos relativos ao Processo Eleitoral do Grupo de Gestão da Operação Urbana Consorciada Bairros do Tamanduateí.`;
-    }
+    const solicitacaoNomeSocial = votante?.nomeSocial && votante.nomeSocial.trim() !== "";
 
-    return `Eu, ${nomeParticipante}, portador do Cadastro de Pessoas Físicas (CPF) no ${cpfFormatado}, nascido em ${dataNascimentoFormatada}, gênero ${genero}, e-mail ${email}, telefone ${telefoneFormatado}. DECLARO, para fins de votação na eleição que tem por finalidade a escolha dos representantes de moradores e trabalhadores do Grupo de Gestão da OUCBT, nos termos do Decreto no 63.840/2024, que ${localDeclaracao} local este inserido no perímetro de adesão da Operação Urbana Consorciada Bairros do Tamanduateí - OUCBT, conforme descrito no §1º do Art.2º deste Edital e no Mapa 2 da Lei 18.079/2024.${solicitacaoNomeSocial}`;
+    return (
+      <>
+        Eu, {nomeParticipante}, portador do Cadastro de Pessoas Físicas (CPF) no {cpfFormatado}, nascido em {dataNascimentoFormatada}, gênero {genero}, e-mail {email}, telefone {telefoneFormatado}. DECLARO, para fins de votação na eleição que tem por finalidade a escolha dos representantes de moradores e trabalhadores do Grupo de Gestão da OUCBT, nos termos do{" "}
+        <a 
+          href="https://legislacao.prefeitura.sp.gov.br/leis/decreto-63840-de-29-de-outubro-de-2024" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:text-blue-800 underline inline-flex items-center gap-1"
+        >
+          Decreto no 63.840/2024
+          <ExternalLink className="w-3 h-3" />
+        </a>
+        , que {localDeclaracao} local este inserido no perímetro de adesão da Operação Urbana Consorciada Bairros do Tamanduateí - OUCBT, conforme descrito no §1º do Art.2º deste Edital e no Mapa 2 da{" "}
+        <a 
+          href="https://legislacao.prefeitura.sp.gov.br/leis/lei-18079-de-11-de-janeiro-de-2024" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:text-blue-800 underline inline-flex items-center gap-1"
+        >
+          Lei 18.079/2024
+          <ExternalLink className="w-3 h-3" />
+        </a>
+        .
+        {solicitacaoNomeSocial && (
+          <>
+            {" "}SOLICITO, conforme{" "}
+            <a 
+              href="https://legislacao.prefeitura.sp.gov.br/leis/decreto-51180-de-14-de-janeiro-de-2010/consolidado" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 underline inline-flex items-center gap-1"
+            >
+              Decreto n°51.180/2010
+              <ExternalLink className="w-3 h-3" />
+            </a>
+            , a inclusão e uso do meu nome social {votante?.nomeSocial} nos documentos relativos ao Processo Eleitoral do Grupo de Gestão da Operação Urbana Consorciada Bairros do Tamanduateí.
+          </>
+        )}
+      </>
+    );
   };
 
   return (
     <div className="space-y-6">
-      <div className="text-center">
-        <FileText className="w-16 h-16 text-blue-500 mx-auto mb-4" />
-        <h3 className="text-xl font-semibold mb-2">Declarações</h3>
-        <p className="text-muted-foreground">
-          Leia atentamente e aceite todas as declarações para finalizar sua inscrição
-        </p>
-      </div>
-
       <Alert>
         <AlertTriangle className="h-4 w-4" />
         <AlertDescription>

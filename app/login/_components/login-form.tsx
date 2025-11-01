@@ -58,10 +58,8 @@ export function LoginForm() {
 			});
 			if (!resp) toast.error('Não foi possível realizar o login.');
 			if (resp) {
-				console.log(resp);
 				if (resp.error) toast.error('Credenciais incorretas.');
 				else if (resp.ok) {
-					console.log(resp.ok);
 					toast.success('Login realizado com sucesso.');
 					router.push('/')
 				}
@@ -73,7 +71,6 @@ export function LoginForm() {
 			// 	router.push('/')
 			// }
 		} catch (e) {
-			console.log(e);
 			toast.error('Não foi possível realizar o login.');
 		}
 	}

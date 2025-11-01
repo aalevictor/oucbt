@@ -32,7 +32,6 @@ export const authConfig = {
 					);
 					if (response.status !== 200) {
 						const responseJson = await response.json();
-						console.log(responseJson.message);
 						throw new Error(responseJson.message || 'Erro ao autenticar usuário');
 					}
 				}

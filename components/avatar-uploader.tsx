@@ -31,7 +31,6 @@ export function AvatarUploader({ avatarUrl, id }: AvatarUploaderProps) {
 		setIsValidating(true);
 		try {
 			const resp = await atualizarUsuario(id, { avatar: inputUrl });
-			console.log(resp);
 			if (!resp) {
 				toast.error('Algo deu errado');
 			} else {
@@ -45,7 +44,7 @@ export function AvatarUploader({ avatarUrl, id }: AvatarUploaderProps) {
 							avatar: dataResp.avatar,
 						},
 					});
-					console.log('Sessão atualizada:', updateSession); // Para depuração
+
 				}
 				window.location.reload();
 			}
@@ -54,7 +53,6 @@ export function AvatarUploader({ avatarUrl, id }: AvatarUploaderProps) {
 
 			toast.success('Avatar atualizado com sucesso');
 		} catch (error) {
-			console.log(error);
 			toast.error('Algo deu errado');
 		} finally {
 			setIsValidating(false);

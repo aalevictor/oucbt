@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils";
 import type { FormularioInscricaoData } from "@/lib/schemas/formulario-inscricao";
 
 export default function EtapaTipoInscricao() {
-  console.log("📝 EtapaTipoInscricao renderizada!");
   const { 
     register,
     watch,
