@@ -17,7 +17,7 @@ export default function Home() {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
-          <Card>
+          <Card className="rounded-none md:rounded-md">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 Art. 10 As inscrições dos eleitores deverão ser realizadas no prazo de 01 de novembro de 2025 até as 23h59 do dia 30 de novembro de 2025, exclusivamente, através do endereço eletrônico “OUCBTeleicao2025.prefeitura.sp.gov.br”
@@ -33,7 +33,7 @@ export default function Home() {
               </ul>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="rounded-none md:rounded-md">
             <CardHeader>
               <CardTitle>Área de Abrangência</CardTitle>
               <CardDescription>
@@ -54,7 +54,7 @@ export default function Home() {
           </p>
         </div>
         
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center p-4 md:px-0">
           <Button asChild size="lg" className="text-lg px-8">
             <Link href="/inscricao">
               Iniciar Inscrição
