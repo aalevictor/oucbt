@@ -1,6 +1,6 @@
 /** @format */
 
-import { ChevronRight, House, LucideProps, Users } from 'lucide-react';
+import { ChevronRight, House, LucideProps, Users, Vote } from 'lucide-react';
 
 import {
 	Collapsible,
@@ -47,6 +47,11 @@ export async function NavMain() {
 			icone: House,
 			titulo: 'Página Inicial',
 			url: '/',
+		},
+		{
+			icone: Vote,
+			titulo: 'Eleitores',
+			url: '/eleitores',
 		},
 	];
 

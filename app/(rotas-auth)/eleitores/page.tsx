@@ -6,9 +6,7 @@ import Pagination from '@/components/pagination';
 import { auth } from '@/auth';
 import { Suspense } from 'react';
 import { columns } from './_components/columns';
-import ModalUpdateAndCreate from './_components/modal-update-create';
-import { buscarUsuarios, IUsuarioPaginado } from '@/services/usuario';
-import { Usuario } from '@prisma/client';
+import { buscarVotantes, IVotante, IVotantePaginado } from '@/services/votantes';
 
 export default async function UsuariosSuspense({
 	searchParams,
@@ -28,20 +26,19 @@ async function Eleitores({
 	searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
 	let { pagina = 1, limite = 10, total = 0 } = await searchParams;
-	const { busca = '', status = '', permissao = '' } = await searchParams;
-	let dados: Usuario[] = [];
+	const { busca = '', status = '' } = await searchParams;
+	let dados: IVotante[] = [];
 
 	const session = await auth();
 	if (session) {
-		const response = await buscarUsuarios(
+		const response = await buscarVotantes(
 			+pagina,
 			+limite,
 			busca as string,
 			status as string,
-			permissao as string,
 		);
 		if (response) {
-			const paginado = response as IUsuarioPaginado;
+			const paginado = response as IVotantePaginado;
 			pagina = paginado.pagina || 1;
 			limite = paginado.limite || 10;
 			total = paginado.total || 0;
@@ -51,29 +48,22 @@ async function Eleitores({
 
 	const statusSelect = [
 		{
-			label: 'Ativo',
-			value: 'ATIVO',
+			label: 'Em análise',
+			value: 'EM_ANALISE',
 		},
 		{
-			label: 'Inativo',
-			value: 'INATIVO',
-		},
-	];
-
-	const permissaoSelect = [
-		{
-			label: 'Desenvolvedor',
-			value: 'DEV',
+			label: 'Deferido',
+			value: 'DEFERIDO',
 		},
 		{
-			label: 'Administrador',
-			value: 'ADM',
-		}
+			label: 'Indeferido',
+			value: 'INDEFERIDO',
+		},
 	];
 
 	return (
 		<div className='  px-0 md:px-8 relative pb-20 md:pb-14 h-full container mx-auto '>
-			<h1 className='text-xl md:text-4xl font-bold'>Usuários</h1>
+			<h1 className='text-xl md:text-4xl font-bold'>Eleitores</h1>
 			<div className='grid grid-cols-1  gap-y-3 my-5 '>
 				<Filtros
 					camposFiltraveis={[
@@ -81,20 +71,14 @@ async function Eleitores({
 							nome: 'Busca',
 							tag: 'busca',
 							tipo: 0,
-							placeholder: 'Digite o nome, email ou login',
+							placeholder: 'Digite o nome ou email',
 						},
 						{
 							nome: 'Status',
 							tag: 'status',
 							tipo: 2,
 							valores: statusSelect,
-							default: 'ATIVO',
-						},
-						{
-							nome: 'Permissão',
-							tag: 'permissao',
-							tipo: 2,
-							valores: permissaoSelect,
+							default: '_all',
 						},
 					]}
 				/>
@@ -112,9 +96,6 @@ async function Eleitores({
 						limite={+limite}
 					/>
 				)}
-			</div>
-			<div className='absolute bottom-10 md:bottom-5 right-2 md:right-8 hover:scale-110'>
-				<ModalUpdateAndCreate isUpdating={false} />
 			</div>
 		</div>
 	);

@@ -168,7 +168,6 @@ export default function FormularioInscricao() {
     
     const etapaSchema = etapaSchemas[etapaAtual as keyof typeof etapaSchemas];
     const dadosEtapa = getValues();
-    console.log("Dados da etapa:", dadosEtapa);
     
     let isValid = false;
     
