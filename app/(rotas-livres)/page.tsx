@@ -54,7 +54,7 @@ export default function Home() {
           </p>
         </div>
         
-        <div className="flex flex-col sm:flex-row gap-4 justify-center p-4 md:px-0">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center px-4 md:px-0">
           <Button asChild size="lg" className="text-lg px-8">
             <Link href="/inscricao">
               Iniciar Inscrição
