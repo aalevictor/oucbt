@@ -19,6 +19,7 @@ export async function buscarVotantes(
     busca?: string,
     status?: string,
 ) {
+    const statusEnum = status ? (status as Status) : undefined;
     [pagina, limite] = verificaPagina(pagina, limite);
     const where = {
         ...(busca && {
@@ -27,7 +28,7 @@ export async function buscarVotantes(
                 { email: { contains: busca } },
             ],
         }),
-        ...(status && status !== 'all' && { status: status as Status }),
+        ...(statusEnum && { status: statusEnum }),
     }
     const total = await db.votante.count({ where });
     if (total === 0) return { data: [], total, pagina, limite };
