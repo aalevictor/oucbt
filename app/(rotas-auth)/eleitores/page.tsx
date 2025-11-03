@@ -78,7 +78,7 @@ async function Eleitores({
 							tag: 'status',
 							tipo: 2,
 							valores: statusSelect,
-							default: '_all',
+							default: 'all',
 						},
 					]}
 				/>
