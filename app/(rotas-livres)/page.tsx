@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, ArrowRight } from "lucide-react";
+import { ArrowRight, Info } from "lucide-react";
 import MapaVisualizacao from "./_components/mapa-visualizacao";
 
 export default function Home() {
@@ -63,9 +63,9 @@ export default function Home() {
           </Button>
           
           <Button variant="outline" size="lg" className="text-lg px-8" asChild>
-            <Link href="https://diariooficial.prefeitura.sp.gov.br/md_epubli_visualizar.php?wTTqxIQPF4V7UvwafiQUL-8MEN2OucopCKUELYCc17LhjMxC222qTsFqI5khi35VA7z9-Bj7UzbNF4uSEZhZ-OivZKGhOonipqzqk7-wPWB3eWHBIZSU0HU4yptvQbwm" target="_blank">
-              Ver Legislação
-              <FileText className="ml-2 h-5 w-5" />
+            <Link href="https://gestaourbana.prefeitura.sp.gov.br/estruturacao-territorial/operacoes-urbanas/oucbt/" target="_blank">
+              Saiba Mais
+              <Info className="ml-2 h-5 w-5" />
             </Link>
           </Button>
         </div>
