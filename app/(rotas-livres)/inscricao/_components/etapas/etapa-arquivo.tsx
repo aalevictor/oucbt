@@ -74,10 +74,11 @@ export default function EtapaArquivo() {
             <li>• Documento oficial com foto</li>
             <li>• CPF (caso não conste no documento de identificação)</li>
             {tipoInscricao === "TRABALHADOR" ? (
-              <li>• CTPS ou contrato de trabalho</li>
+              <li>• CTPS ou contrato de trabalho de empresa no perímetro de adesão da OUCBT</li>
             ) : (
               <li>• Comprovante de residência no perímetro de adesão da OUCBT</li>
             )}
+            <li>• <a href="/anexoIII.pdf" download className="text-blue-600 hover:underline">Anexo III (paginas 13 e 14 do Edital)</a></li>
           </ul>
         </AlertDescription>
       </Alert>

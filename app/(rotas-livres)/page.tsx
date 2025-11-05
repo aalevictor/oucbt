@@ -10,10 +10,10 @@ export default function Home() {
       {/* Sobre a OUC */}
       <section className="space-y-6">
         <div className="text-center space-y-2">
-          <h2 className="text-3xl font-bold">Sobre a Inscrição para Eleitor</h2>
-          <p className="text-muted-foreground">
-            Conheça os requisitos e procedimentos para se inscrever como eleitor
-          </p>
+          <h2 className="text-3xl font-bold">Sobre a Inscrição para Eleitor (Moradores e trabalhadores)</h2>
+          <a href="https://gestaourbana.prefeitura.sp.gov.br/wp-content/uploads/2025/09/Edital_002_2025_SPURB_OUCBT_Trabalhadores_e_251017_092250-1.pdf" target="_blank" className="text-muted-foreground underline">
+            Edital Nº 002/2025/SPURB/OUCBT
+          </a>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
