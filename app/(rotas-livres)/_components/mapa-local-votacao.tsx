@@ -7,10 +7,10 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import OSM from "ol/source/OSM";
 import { fromLonLat } from "ol/proj";
-import { Style, Fill, Stroke } from "ol/style";
+import { Style, Fill, Stroke, Circle } from "ol/style";
 import { defaults as defaultControls } from "ol/control";
-import KML from "ol/format/KML";
 import { Point } from "ol/geom";
+import { MapIcon } from "lucide-react";
 
 interface MapaLocalVotacaoProps {
   className?: string;
@@ -27,13 +27,21 @@ const MapaLocalVotacao: React.FC<MapaLocalVotacaoProps> = ({
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
 
-    const lonlat = fromLonLat([-46.6212, -23.5978]);
+    const lonlat = fromLonLat([-46.621155865, -23.5975570024]);
     const markersSource = new VectorSource();
-    markersSource.addFeature(
-      new Feature({
-        geometry: new Point(lonlat),
+    const marker = new Feature({
+      geometry: new Point(lonlat),
+    });
+    marker.setStyle(
+      new Style({
+        image: new Circle({
+          radius: 8,
+          fill: new Fill({ color: "#ef4444" }),
+          stroke: new Stroke({ color: "#ffffff", width: 2 }),
+        }),
       })
     );
+    markersSource.addFeature(marker);
     const markersLayer = new VectorLayer({
       source: markersSource,
     });
@@ -49,7 +57,7 @@ const MapaLocalVotacao: React.FC<MapaLocalVotacaoProps> = ({
       ],
       view: new View({
         center: lonlat, // Centro do KML OUC Bairros do Tamanduateí
-        zoom: 16,
+        zoom: 17,
       }),
       controls: defaultControls({
         attribution: false,
@@ -73,11 +81,14 @@ const MapaLocalVotacao: React.FC<MapaLocalVotacaoProps> = ({
   }, []);
 
   return (
-    <div 
-      ref={mapRef} 
-      className={`w-full border border-border rounded-lg ${className}`}
-      style={{ height }}
-    />
+    <div className="relative w-full" style={{ height }}>
+      <a href="https://maps.app.goo.gl/9Vigzh86jkWrLtEM8" target="_blank">
+        <div 
+          ref={mapRef} 
+          className={`w-full h-full border border-border rounded-lg ${className}`}
+        />
+      </a>
+    </div>
   );
 };
 
