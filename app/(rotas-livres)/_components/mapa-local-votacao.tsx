@@ -23,11 +23,13 @@ const MapaLocalVotacao: React.FC<MapaLocalVotacaoProps> = ({
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<Map | null>(null);
+  const lat = -23.5975570024;
+  const lon = -46.621155865;
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
 
-    const lonlat = fromLonLat([-46.621155865, -23.5975570024]);
+    const lonlat = fromLonLat([lon, lat]);
     const markersSource = new VectorSource();
     const marker = new Feature({
       geometry: new Point(lonlat),
@@ -82,11 +84,28 @@ const MapaLocalVotacao: React.FC<MapaLocalVotacaoProps> = ({
 
   return (
     <div className="relative w-full" style={{ height }}>
-      <a href="https://maps.app.goo.gl/9Vigzh86jkWrLtEM8" target="_blank">
-        <div 
-          ref={mapRef} 
-          className={`w-full h-full border border-border rounded-lg ${className}`}
-        />
+      <div 
+        ref={mapRef} 
+        className={`w-full h-full border border-border rounded-lg ${className}`}
+      />
+      <a
+        href={`https://maps.app.goo.gl/9Vigzh86jkWrLtEM8`}
+        onClick={(e) => {
+          e.preventDefault();
+          const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
+          const isIOS = /iPad|iPhone|iPod/i.test(ua);
+          let url = `https://maps.app.goo.gl/9Vigzh86jkWrLtEM8`;
+          if (isIOS) {
+            url = `maps://?q=${lat},${lon}`;
+          }
+          window.open(url, '_blank');
+        }}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="absolute bottom-2 right-2 px-2.5 py-2 bg-background text-foreground border rounded-md shadow-sm hover:bg-muted z-10 flex items-center gap-2"
+        aria-label="Abrir no app de mapas"
+      >
+        Abrir no mapa
       </a>
     </div>
   );
