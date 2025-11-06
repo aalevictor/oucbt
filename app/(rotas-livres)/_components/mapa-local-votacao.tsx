@@ -10,7 +10,6 @@ import { fromLonLat } from "ol/proj";
 import { Style, Fill, Stroke, Circle } from "ol/style";
 import { defaults as defaultControls } from "ol/control";
 import { Point } from "ol/geom";
-import { MapIcon } from "lucide-react";
 
 interface MapaLocalVotacaoProps {
   className?: string;
@@ -23,8 +22,8 @@ const MapaLocalVotacao: React.FC<MapaLocalVotacaoProps> = ({
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<Map | null>(null);
-  const lat = -23.5975570024;
-  const lon = -46.621155865;
+  const lat = -23.59725;
+  const lon = -46.62092;
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
@@ -48,7 +47,6 @@ const MapaLocalVotacao: React.FC<MapaLocalVotacaoProps> = ({
       source: markersSource,
     });
 
-    // Configuração inicial do mapa (sem interação)
     const map = new Map({
       target: mapRef.current,
       layers: [
@@ -58,7 +56,7 @@ const MapaLocalVotacao: React.FC<MapaLocalVotacaoProps> = ({
         markersLayer,
       ],
       view: new View({
-        center: lonlat, // Centro do KML OUC Bairros do Tamanduateí
+        center: lonlat,
         zoom: 17,
       }),
       controls: defaultControls({
@@ -66,10 +64,8 @@ const MapaLocalVotacao: React.FC<MapaLocalVotacaoProps> = ({
         zoom: true,
         rotate: false,
       }),
-      // Manter interações de zoom e pan, mas sem seleção
     });
 
-    // Adicionar controles de zoom personalizados
     map.getControls().clear();
 
     mapInstanceRef.current = map;
