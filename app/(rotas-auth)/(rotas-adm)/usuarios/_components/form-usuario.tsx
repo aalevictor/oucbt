@@ -2,7 +2,6 @@
 
 'use client';
 
-import { auth } from '@/auth';
 import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
 import {
@@ -67,13 +66,8 @@ export default function FormUsuario({ isUpdating, user }: FormUsuarioProps) {
 	});
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		const session = await auth();
-		if (!session) {
-			toast.error('Não autorizado');
-			return;
-		}
 		const { login } = values;
-		const resp = await fetch(`/api/ldap/buscar-por-login/${login}`);
+		const resp = await fetch(`/api/usuarios/buscar-por-login/${login}`);
 		if (resp.status !== 200) {
 			toast.error('Usuário não encontrado');
 			return;
@@ -90,27 +84,22 @@ export default function FormUsuario({ isUpdating, user }: FormUsuarioProps) {
 	async function onSubmitUser(values: z.infer<typeof formSchemaUsuario>) {
 		startTransition(async () => {
 			if (isUpdating && user?.id) {
-				const resp = await atualizarUsuario(user?.id, {
-					permissao: values.permissao as unknown as Permissao,
-				});
-				if (!resp)
-					toast.error('Algo deu errado');
-				if (resp) {
-					toast.success('Usuário Atualizado', { description: resp.status });
-					document.getElementById('close-dialog-voltar')?.click();
-				}
+
 			} else {
-				const { email, login, nome, permissao } = values;
-				const resp = await criarUsuario({
-					email,
-					login,
-					nome,
-					permissao: permissao as unknown as Permissao,
+				const resposta = await fetch('/api/usuarios', {
+					method: 'POST',
+					body: JSON.stringify(values),
 				});
-				if (!resp) toast.error('Algo deu errado');
-				if (resp) {
-					toast.success('Usuário Criado', { description: resp.status });
-					document.getElementById('close-dialog-voltar')?.click();
+				if (resposta.status !== 201) {
+					const erro = await resposta.json();
+					toast.error(erro.error);
+					return;
+				}
+				const usuarioNovo = await resposta.json();
+				if (usuarioNovo) {
+					toast.success('Usuário Criado', { description: usuarioNovo.status });
+					//should refresh page
+					window.location.reload();
 				}
 			}
 		});
