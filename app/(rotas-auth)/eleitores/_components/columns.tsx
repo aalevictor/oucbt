@@ -6,8 +6,24 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Badge } from '@/components/ui/badge';
 import { IVotante } from '@/services/votantes';
 import { Votante } from '@prisma/client';
+import { Button } from '@/components/ui/button';
+import { Eye } from 'lucide-react';
+import Link from '@/components/link';
 
 export const columns: ColumnDef<IVotante>[] = [
+	{
+		accessorKey: 'acoes',
+		header: '',
+		cell: ({ row }) => {
+			return (
+				<div className='flex items-center gap-2'>
+					<Link href={`/eleitores/${row.original.id}`} className='text-sm font-medium text-muted-foreground'>
+						<Eye className='w-4 h-4' />
+					</Link>
+				</div>
+			);
+		},
+	},
 	{
 		accessorKey: 'tipoInscricao',
 		header: '',

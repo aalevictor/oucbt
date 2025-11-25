@@ -1,6 +1,7 @@
 import { db } from "@/lib/prisma";
 import { verificaLimite, verificaPagina } from "@/lib/utils";
 import { Arquivo, Endereco, Status, Votante } from "@prisma/client";
+import { retornaPermissao } from "./usuario";
 
 export interface IVotantePaginado {
     data: IVotante[];
@@ -44,4 +45,27 @@ export async function buscarVotantes(
         where
     });
     return { data: usuarios, total, pagina, limite };
+}
+
+export async function buscarVotantePorId(id: string) {
+    const votante = await db.votante.findUnique({
+        where: { id },
+        include: {
+            endereco: true,
+            arquivos: true,
+        },
+    });
+    return votante as IVotante | null;
+}
+
+export async function atualizarStatusVotante(id: string, novoStatus: Status, usuarioId: string) {
+    const permissao = await retornaPermissao(usuarioId);
+    if (!permissao || !["DEV", "ADM"].includes(permissao)) return null;
+    const existe = await db.votante.findUnique({ where: { id } });
+    if (!existe) return null;
+    const atualizado = await db.votante.update({
+        where: { id },
+        data: { status: novoStatus },
+    });
+    return atualizado as IVotante;
 }
