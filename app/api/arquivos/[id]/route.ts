@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/prisma";
 import { readFile } from "fs/promises";
+import { join } from "path";
 
 export async function GET(
   _req: NextRequest,
@@ -17,7 +18,13 @@ export async function GET(
       return NextResponse.json({ error: "Arquivo não encontrado" }, { status: 404 });
     }
 
-    const buffer = await readFile(arquivo.caminho);
+    let filePath = arquivo.caminho;
+    const normalized = filePath.replace(/\\/g, "/");
+    const parts = normalized.split("/uploads/");
+    if (parts.length > 1) {
+      filePath = join(process.cwd(), "uploads", parts[1]);
+    }
+    const buffer = await readFile(filePath);
 
     const headers = new Headers();
     headers.set("Content-Type", arquivo.tipo || "application/octet-stream");
