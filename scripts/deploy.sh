@@ -22,6 +22,11 @@ cmd_deploy() {
   docker compose up -d "$SERVICE"
 }
 
+cmd_recreate() {
+  # Force container recreation to apply new env vars from .env without rebuilding
+  docker compose up -d --force-recreate --no-deps "$SERVICE"
+}
+
 cmd_migrate() {
   docker compose exec "$SERVICE" npx prisma migrate deploy
 }
@@ -39,11 +44,12 @@ ACTION=${1:-deploy}
 case "$ACTION" in
   build) cmd_build ;;
   deploy|pull) cmd_deploy ;;
+  recreate|reload-env|env) cmd_recreate ;;
   migrate) cmd_migrate ;;
   logs) cmd_logs ;;
   rollback) cmd_rollback ;;
   *)
-    echo "Uso: $0 [build|deploy|migrate|logs|rollback]" >&2
+    echo "Uso: $0 [build|deploy|recreate|reload-env|env|migrate|logs|rollback]" >&2
     exit 1
     ;;
 esac
