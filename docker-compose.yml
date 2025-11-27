@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  oucbt:
+    image: oucbt:prod
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: oucbt-app
+    restart: unless-stopped
+    ports:
+      - "3005:3005" # host:container, matches npm run start
+    environment:
+      NODE_ENV: production
+      TZ: America/Sao_Paulo
+      # Set these according to your server environment
+      # DATABASE_URL: "postgresql://user:pass@host:5432/dbname?schema=public"
+      # NEXTAUTH_URL: "https://seu-dominio"
+      # AUTH_SECRET: "uma_chave_segura"
+    env_file:
+      - .env
+    volumes:
+      - ./uploads:/app/uploads
+    # If needed to set timezone in container
+    # environment:
+
+    # Healthcheck (optional): checks if app port is open
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3005',()=>process.exit(0)).on('error',()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

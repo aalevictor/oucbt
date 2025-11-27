@@ -1,0 +1,15 @@
+# Ignore files not needed in the Docker build context
+node_modules
+.next
+.git
+.gitignore
+.vscode
+uploads
+.env*
+Dockerfile*
+docker-compose*.yml
+tmp
+*.log
+README.md
+coverage
+dist
