@@ -36,6 +36,7 @@ export async function buscarVotantes(
     const usuarios = await db.votante.findMany({
         skip: (pagina - 1) * limite,
         take: limite,
+        orderBy: { criadoEm: 'asc' },
         include: {
             endereco: true,
             arquivos: {
