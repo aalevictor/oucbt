@@ -25,6 +25,17 @@ export const columns: ColumnDef<IVotante>[] = [
 		},
 	},
 	{
+		accessorKey: 'criadoEm',
+		header: 'Inscrito em',
+		cell: ({ row }) => {
+			const raw = row.original.criadoEm;
+			const isoDate = new Date(raw as Date | string).toISOString().slice(0, 10);
+			const [anoStr, mesStr, diaStr] = isoDate.split('-');
+			const formatada = `${diaStr}/${mesStr}/${anoStr}`;
+			return `${formatada}`;
+		},
+	},
+	{
 		accessorKey: 'tipoInscricao',
 		header: '',
 		cell: ({ row }) => {
