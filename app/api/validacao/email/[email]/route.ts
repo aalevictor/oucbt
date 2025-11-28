@@ -13,15 +13,17 @@ export async function GET(
         { status: 400 }
       );
     }
-    const [votanteExistente, usuarioExistente] = await Promise.all([
+    const [votanteExistente] = await Promise.all([
       db.votante.findUnique({
-        where: { email: email.toLowerCase() }
+        where: { 
+          email: email.toLowerCase(),
+          status: {
+            in: ['DEFERIDO', 'EM_ANALISE']
+          }
+        }
       }),
-      db.usuario.findUnique({
-        where: { email: email.toLowerCase() }
-      })
     ]);
-    const emailJaCadastrado = votanteExistente || usuarioExistente;
+    const emailJaCadastrado = votanteExistente;
     return NextResponse.json({
       disponivel: !emailJaCadastrado,
       message: emailJaCadastrado ? "Email já cadastrado" : "Email disponível"

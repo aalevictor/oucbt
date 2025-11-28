@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/prisma";
 import { formularioInscricaoSchema } from "@/lib/schemas/formulario-inscricao";
-import { writeFile, mkdir } from "fs/promises";
+import { writeFile, mkdir, rm } from "fs/promises";
 import { join } from "path";
 import { existsSync } from "fs";
 
@@ -59,28 +59,143 @@ export async function POST(request: NextRequest) {
     // Validar dados com o schema
     const dadosValidados = formularioInscricaoSchema.parse(dadosFormulario);
 
-    // Verificar se email e CPF já existem
-    const [emailExistente, cpfExistente] = await Promise.all([
-      db.votante.findUnique({
-        where: { email: dadosValidados.votante.email.toLowerCase() }
-      }),
-      db.votante.findUnique({
-        where: { cpf: dadosValidados.votante.cpf.replace(/[^\d]/g, '') }
-      })
+    // Verificar existência de cadastro por email ou cpf
+    const emailNormalizado = dadosValidados.votante.email.toLowerCase();
+    const cpfNormalizado = dadosValidados.votante.cpf.replace(/[^\d]/g, "");
+
+    const [existentePorEmail, existentePorCpf] = await Promise.all([
+      db.votante.findUnique({ where: { email: emailNormalizado } }),
+      db.votante.findUnique({ where: { cpf: cpfNormalizado } }),
     ]);
 
-    if (emailExistente) {
+    const existente = existentePorEmail ?? existentePorCpf;
+
+    // Se existe e não está indeferido, bloquear novo envio
+    if (existente && existente.status !== "INDEFERIDO") {
       return NextResponse.json(
-        { error: "Email já cadastrado" },
+        { error: "Cadastro já existente (EM_ANÁLISE/DEFERIDO)." },
         { status: 400 }
       );
     }
 
-    if (cpfExistente) {
-      return NextResponse.json(
-        { error: "CPF já cadastrado" },
-        { status: 400 }
-      );
+    // Se existe e está INDEFERIDO, atualizar dados e substituir arquivos
+    if (existente && existente.status === "INDEFERIDO") {
+      const votanteId = existente.id;
+
+      // Limpar diretório de uploads do votante (se existir)
+      const uploadsDir = join(process.cwd(), "uploads");
+      const votanteDir = join(uploadsDir, votanteId.toString());
+      try {
+        await rm(votanteDir, { recursive: true, force: true });
+      } catch (e) {
+        // Ignorar falhas ao remover diretório
+      }
+
+      // Recriar diretório
+      if (!existsSync(uploadsDir)) {
+        await mkdir(uploadsDir, { recursive: true });
+      }
+      await mkdir(votanteDir, { recursive: true });
+
+      const resultado = await db.$transaction(async (tx) => {
+        // Atualizar dados do votante e retornar a EM_ANALISE
+        const votanteAtualizado = await tx.votante.update({
+          where: { id: votanteId },
+          data: {
+            tipoInscricao: dadosValidados.tipoInscricao,
+            nome: dadosValidados.votante.nome,
+            nomeSocial: dadosValidados.votante.nomeSocial || null,
+            telefone: dadosValidados.votante.telefone,
+            genero: dadosValidados.votante.genero,
+            email: emailNormalizado,
+            cpf: cpfNormalizado,
+            dataNascimento: (() => {
+              const parts = dadosValidados.votante.dataNascimento.split("-").map(Number);
+              if (parts.length === 3) {
+                const [ano, mes, dia] = parts;
+                return new Date(ano, mes - 1, dia);
+              }
+              return new Date(dadosValidados.votante.dataNascimento);
+            })(),
+            empresa: dadosValidados.votante.empresa || null,
+            status: "EM_ANALISE",
+          }
+        });
+
+        // Upsert de endereço
+        await tx.endereco.upsert({
+          where: { votanteId },
+          update: {
+            logradouro: dadosValidados.endereco.logradouro,
+            numero: dadosValidados.endereco.numero,
+            complemento: dadosValidados.endereco.complemento,
+            bairro: dadosValidados.endereco.bairro,
+            cidade: dadosValidados.endereco.cidade,
+            estado: dadosValidados.endereco.estado,
+            cep: dadosValidados.endereco.cep,
+            latitude: dadosValidados.endereco.latitude,
+            longitude: dadosValidados.endereco.longitude,
+          },
+          create: {
+            logradouro: dadosValidados.endereco.logradouro,
+            numero: dadosValidados.endereco.numero,
+            complemento: dadosValidados.endereco.complemento,
+            bairro: dadosValidados.endereco.bairro,
+            cidade: dadosValidados.endereco.cidade,
+            estado: dadosValidados.endereco.estado,
+            cep: dadosValidados.endereco.cep,
+            latitude: dadosValidados.endereco.latitude,
+            longitude: dadosValidados.endereco.longitude,
+            votanteId,
+          },
+        });
+
+        // Apagar registros antigos de arquivos
+        await tx.arquivo.deleteMany({ where: { votanteId } });
+
+        // Salvar novos arquivos
+        const arquivosSalvos: { nome: string; tipo: string; tamanho: number; caminho: string }[] = [];
+        if (dadosValidados.arquivos && dadosValidados.arquivos.arquivos && dadosValidados.arquivos.arquivos.length > 0) {
+          for (const arquivo of dadosValidados.arquivos.arquivos) {
+            const timestamp = Date.now();
+            const random = Math.random().toString(36).substring(2);
+            const nomeArquivo = `${timestamp}-${random}-${arquivo.name}`;
+            const caminhoArquivo = join(votanteDir, nomeArquivo);
+
+            const bytes = await arquivo.arrayBuffer();
+            const buffer = Buffer.from(bytes);
+            await writeFile(caminhoArquivo, buffer);
+
+            arquivosSalvos.push({
+              nome: arquivo.name,
+              tipo: arquivo.type,
+              tamanho: arquivo.size,
+              caminho: caminhoArquivo,
+            });
+          }
+        }
+
+        // Criar registros dos novos arquivos
+        for (const arquivoSalvo of arquivosSalvos) {
+          await tx.arquivo.create({
+            data: {
+              nome: arquivoSalvo.nome,
+              tipo: arquivoSalvo.tipo,
+              tamanho: arquivoSalvo.tamanho,
+              caminho: arquivoSalvo.caminho,
+              votanteId,
+            }
+          });
+        }
+
+        return votanteAtualizado;
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: "Reenvio realizado com sucesso! Dados atualizados e arquivos substituídos.",
+        votanteId: resultado.id,
+      });
     }
 
     // Salvar no banco de dados usando transação

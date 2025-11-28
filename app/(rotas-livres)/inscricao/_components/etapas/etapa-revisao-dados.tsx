@@ -3,7 +3,8 @@
 import { useFormContext } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { User, MapPin, FileText } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { User, MapPin, FileText, AlertTriangle } from "lucide-react";
 import type { FormularioInscricaoData } from "@/lib/schemas/formulario-inscricao";
 
 export default function EtapaRevisaoDados() {
@@ -170,6 +171,15 @@ export default function EtapaRevisaoDados() {
                 </span>
               </div>
             ))}
+          </div>
+          <div className="mt-4">
+            <Alert>
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                <strong>Atenção:</strong> Se você está refazendo seu cadastro, envie todos os documentos novamente. 
+                Os arquivos antigos serão substituídos pelos novos após o envio.
+              </AlertDescription>
+            </Alert>
           </div>
         </CardContent>
       </Card>

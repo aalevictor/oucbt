@@ -20,7 +20,10 @@ export async function GET(
     // Verifica se o CPF já existe no banco
     const votanteExistente = await db.votante.findUnique({
       where: {
-        cpf: cpfLimpo
+        cpf: cpfLimpo,
+        status: {
+          in: ['DEFERIDO', 'EM_ANALISE']
+        }
       }
     });
 
