@@ -75,9 +75,15 @@ export const votanteSchema = z.object({
     .string()
     .min(1, "Data de nascimento é obrigatória")
     .refine((data) => {
-      const dataObj = new Date(data);
+      const parts = data.split("-").map(Number);
+      if (parts.length !== 3) return false;
+      const [ano, mes, dia] = parts;
       const hoje = new Date();
-      const idade = hoje.getFullYear() - dataObj.getFullYear();
+      let idade = hoje.getFullYear() - ano;
+      const mesDiff = hoje.getMonth() - (mes - 1);
+      if (mesDiff < 0 || (mesDiff === 0 && hoje.getDate() < dia)) {
+        idade--;
+      }
       return idade >= 16 && idade <= 120;
     }, "Você deve ter pelo menos 16 anos para se inscrever"),
   

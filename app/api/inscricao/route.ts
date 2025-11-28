@@ -95,7 +95,15 @@ export async function POST(request: NextRequest) {
           genero: dadosValidados.votante.genero,
           email: dadosValidados.votante.email.toLowerCase(),
           cpf: dadosValidados.votante.cpf.replace(/[^\d]/g, ''),
-          dataNascimento: new Date(dadosValidados.votante.dataNascimento),
+          // Interpretar 'YYYY-MM-DD' como data local para evitar regressão por fuso horário
+          dataNascimento: (() => {
+            const parts = dadosValidados.votante.dataNascimento.split("-").map(Number);
+            if (parts.length === 3) {
+              const [ano, mes, dia] = parts;
+              return new Date(ano, mes - 1, dia);
+            }
+            return new Date(dadosValidados.votante.dataNascimento);
+          })(),
           empresa: dadosValidados.votante.empresa || null,
           status: "EM_ANALISE",
         }

@@ -27,8 +27,19 @@ export default function EtapaRevisaoDados() {
   };
 
   const formatarDataNascimento = (data: string) => {
-    const dataObj = new Date(data);
-    return dataObj.toLocaleDateString("pt-BR");
+    if (!data) return "";
+    const parts = data.split("-");
+    if (parts.length === 3) {
+      const [ano, mes, dia] = parts;
+      return `${dia}/${mes}/${ano}`;
+    }
+    // Fallback seguro
+    try {
+      const dataObj = new Date(data);
+      return dataObj.toLocaleDateString("pt-BR");
+    } catch {
+      return data;
+    }
   };
 
   const formatarGenero = (genero: string) => {
