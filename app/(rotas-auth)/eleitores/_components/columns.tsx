@@ -71,9 +71,15 @@ export const columns: ColumnDef<IVotante>[] = [
 		accessorKey: 'dataNascimento',
 		header: 'Dt. Nascimento',
 		cell: ({ row }) => {
-			const dataNascimento = new Date(row.original.dataNascimento);
-			const idade = Math.floor((Date.now() - dataNascimento.getTime()) / (1000 * 60 * 60 * 24 * 365.25));
-			const formatada = new Date(row.original.dataNascimento).toISOString().split('T')[0].split('-').reverse().join('/');
+			const raw = row.original.dataNascimento;
+			const isoDate = new Date(raw as Date | string).toISOString().slice(0, 10);
+			const [anoStr, mesStr, diaStr] = isoDate.split('-');
+			const ano = Number(anoStr), mes = Number(mesStr), dia = Number(diaStr);
+			const hoje = new Date();
+			let idade = hoje.getFullYear() - ano;
+			const mesDiff = hoje.getMonth() - (mes - 1);
+			if (mesDiff < 0 || (mesDiff === 0 && hoje.getDate() < dia)) idade--;
+			const formatada = `${diaStr}/${mesStr}/${anoStr}`;
 			return `${formatada} (${idade} anos)`;
 		},
 	},

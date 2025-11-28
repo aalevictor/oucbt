@@ -18,8 +18,25 @@ function formatarCEP(cep: string) {
 }
 
 function formatarData(dataISO: Date | string) {
-  const d = new Date(dataISO);
-  return d.toLocaleDateString('pt-BR');
+  if (!dataISO) return '';
+  // Tratar string 'YYYY-MM-DD' como data local (sem fuso)
+  if (typeof dataISO === 'string') {
+    const iso = dataISO.slice(0, 10); // YYYY-MM-DD
+    const parts = iso.split('-');
+    if (parts.length === 3) {
+      const [ano, mes, dia] = parts;
+      return `${dia}/${mes}/${ano}`;
+    }
+  }
+  // Para Date, usar UTC ISO para extrair a parte da data
+  try {
+    const d = new Date(dataISO);
+    const iso = d.toISOString().slice(0, 10); // YYYY-MM-DD em UTC
+    const [ano, mes, dia] = iso.split('-');
+    return `${dia}/${mes}/${ano}`;
+  } catch {
+    return String(dataISO);
+  }
 }
 
 function formatarGenero(genero: string) {
