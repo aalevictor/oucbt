@@ -6,6 +6,14 @@ import { join } from "path";
 import { existsSync } from "fs";
 
 export async function POST(request: NextRequest) {
+  const limiteInscricao = new Date("2025-11-30T23:59:59.999Z");
+  const agora = new Date();
+  if (agora > limiteInscricao) {
+    return NextResponse.json(
+      { error: "Não é possível se inscrever fora do prazo." },
+      { status: 400 }
+    );
+  }
   try {
     const formData = await request.formData();
     

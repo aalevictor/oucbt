@@ -6,6 +6,9 @@ import MapaVisualizacao from "./_components/mapa-visualizacao";
 import MapaLocalVotacao from "./_components/mapa-local-votacao";
 
 export default function Home() {
+  const limiteInscricao = new Date("2025-11-30T23:59:59.999Z");
+  const agora = new Date();
+  const podeInscrever = agora <= limiteInscricao;
   return (
     <div className="space-y-8">
       {/* Sobre a OUC */}
@@ -85,12 +88,19 @@ export default function Home() {
         </div>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center px-4 md:px-0">
-          <Button asChild size="lg" className="text-lg px-8">
-            <Link href="/inscricao">
-              Iniciar Inscrição
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
-          </Button>
+          {podeInscrever && (
+            <Button asChild size="lg" className="text-lg px-8">
+              <Link href="/inscricao">
+                Iniciar Inscrição
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
+          )}
+          {!podeInscrever && (
+            <Button className="text-lg px-8" disabled>
+              Inscrição Encerrada
+            </Button>
+          )}
           
           <Button variant="outline" size="lg" className="text-lg px-8" asChild>
             <Link href="https://gestaourbana.prefeitura.sp.gov.br/estruturacao-territorial/operacoes-urbanas/oucbt/" target="_blank">
