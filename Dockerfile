@@ -19,6 +19,8 @@ FROM node:20-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3005
+ENV HOSTNAME=0.0.0.0
 
 # Copy only necessary files for standalone runtime
 COPY --from=builder /app/package.json ./package.json
@@ -32,5 +34,4 @@ VOLUME ["/app/uploads"]
 
 # The project start script uses port 3005
 EXPOSE 3005
-
-CMD ["npm", "run", "start"]
+CMD ["node", "server.js"]
