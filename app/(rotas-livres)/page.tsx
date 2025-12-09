@@ -13,11 +13,17 @@ export default function Home() {
     <div className="space-y-8">
       {/* Sobre a OUC */}
       <section className="space-y-6">
-        <div className="text-center space-y-2">
+        <div className="text-center space-y-2 flex flex-col items-center gap-2">
           <h2 className="text-3xl font-bold">Sobre a Inscrição para Eleitor (Moradores e trabalhadores)</h2>
           <a href="https://gestaourbana.prefeitura.sp.gov.br/wp-content/uploads/2025/09/Edital_002_2025_SPURB_OUCBT_Trabalhadores_e_251017_092250-1.pdf" target="_blank" className="text-muted-foreground underline">
             Edital Nº 002/2025/SPURB/OUCBT
           </a>
+          <Button asChild size="lg" className="text-lg mx-4 px-8 bg-amber-500 hover:bg-amber-600 text-white">
+            <Link href="/consulta-cadastro">
+              Consultar status de inscrição
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
