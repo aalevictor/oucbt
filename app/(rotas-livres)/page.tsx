@@ -1,9 +1,10 @@
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Info } from "lucide-react";
-import MapaVisualizacao from "./_components/mapa-visualizacao";
-import MapaLocalVotacao from "./_components/mapa-local-votacao";
+const MapaVisualizacao = dynamic(() => import("./_components/mapa-visualizacao"));
+const MapaLocalVotacao = dynamic(() => import("./_components/mapa-local-votacao"));
 
 export default function Home() {
   const limiteInscricao = new Date("2025-11-30T23:59:59.999Z");

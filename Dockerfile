@@ -15,14 +15,15 @@ COPY . .
 ENV NODE_ENV=production
 RUN npm run build
 
-FROM node:20 AS runner
+FROM node:20-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
-# Copy only necessary files for runtime
+# Copy only necessary files for standalone runtime
 COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/prisma ./prisma
 
