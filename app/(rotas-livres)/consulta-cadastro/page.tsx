@@ -97,7 +97,7 @@ export default function ConsultaCadastroPage() {
           <p className="text-muted-foreground">Informe seu CPF para verificar se sua inscrição foi aceita, indeferida ou se ainda está em análise.</p>
         </div>
 
-        <Card className="max-w-4xl max-sm:rounded-none flex justify-between">
+        <Card className="max-w-2xl mx-auto max-sm:rounded-none flex justify-between">
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3 items-end">
               <div className="space-y-2">

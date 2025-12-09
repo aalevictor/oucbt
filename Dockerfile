@@ -21,6 +21,13 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3005
 ENV HOSTNAME=0.0.0.0
+# Use Node-API engine to avoid OpenSSL runtime mismatch
+ENV PRISMA_CLIENT_ENGINE_TYPE=library
+
+# Ensure OpenSSL is available for Prisma CLI tooling (e.g., migrate)
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends openssl ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy only necessary files for standalone runtime
 COPY --from=builder /app/package.json ./package.json
