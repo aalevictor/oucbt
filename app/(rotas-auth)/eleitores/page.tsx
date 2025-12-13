@@ -7,6 +7,7 @@ import { auth } from '@/auth';
 import { Suspense } from 'react';
 import { columns } from './_components/columns';
 import { buscarVotantes, IVotante, IVotantePaginado } from '@/services/votantes';
+import { Button } from '@/components/ui/button';
 
 export default async function UsuariosSuspense({
 	searchParams,
@@ -82,6 +83,18 @@ async function Eleitores({
 						},
 					]}
 				/>
+
+				<div className='flex justify-end'>
+					<Button asChild>
+						<a
+							href='/api/votantes/export'
+							download
+							className='inline-flex items-center gap-2'
+						>
+							Exportar DEFERIDOS (.txt)
+						</a>
+					</Button>
+				</div>
 				<div className='w-full'>
 					<DataTable
 						columns={columns}
